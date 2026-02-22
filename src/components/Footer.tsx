@@ -57,13 +57,13 @@ export const Footer = ({ onOpenModal }: FooterProps) => {
                         </div>
                     </div>
 
-                    {/* Platform Column */}
+                    {/* Product Column */}
                     <div>
-                        <h4 className="font-bold text-lg mb-8">Platform</h4>
+                        <h4 className="font-bold text-lg mb-8">Product</h4>
                         <ul className="space-y-4 text-white/50 font-medium">
-                            <li><Link to="/study" className="hover:text-brandPurple transition-colors">Study Workspace</Link></li>
-                            <li><Link to="/history" className="hover:text-brandPurple transition-colors">Past Sessions</Link></li>
-                            <li><Link to="/dashboard" className="hover:text-brandPurple transition-colors">Analytics</Link></li>
+                            <li><a href="#features" className="hover:text-brandPurple transition-colors">Features</a></li>
+                            <li><a href="#pricing" className="hover:text-brandPurple transition-colors">Pricing</a></li>
+                            <li><a href="#testimonials" className="hover:text-brandPurple transition-colors">Testimonials</a></li>
                         </ul>
                     </div>
 
@@ -71,10 +71,9 @@ export const Footer = ({ onOpenModal }: FooterProps) => {
                     <div>
                         <h4 className="font-bold text-lg mb-8">Company</h4>
                         <ul className="space-y-4 text-white/50 font-medium">
-                            <li><a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="hover:text-brandPurple transition-colors">Our Story</a></li>
+                            <li><a href="#team" className="hover:text-brandPurple transition-colors">The Team</a></li>
+                            <li><a href="#about" className="hover:text-brandPurple transition-colors">Our Story</a></li>
                             <li><a href="/help" onClick={(e) => handleModalLink(e, 'help')} className="hover:text-brandPurple transition-colors">Support</a></li>
-                            <li><a href="/blog" onClick={(e) => handleModalLink(e, 'blog')} className="hover:text-brandPurple transition-colors">Journal</a></li>
-                            <li><a href="#pricing" className="hover:text-brandPurple transition-colors">Pricing</a></li>
                         </ul>
                     </div>
 

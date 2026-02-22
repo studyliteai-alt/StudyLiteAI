@@ -75,7 +75,7 @@ export const Testimonials = () => {
     }, [maxIndex]);
 
     return (
-        <Section className="py-32 bg-white overflow-hidden">
+        <Section id="testimonials" className="py-32 bg-white overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
                     <div className="max-w-2xl">

@@ -38,7 +38,7 @@ const team = [
 
 export const TeamSection = () => {
     return (
-        <Section className="py-32 bg-cream/30">
+        <Section id="team" className="py-32 bg-cream/30">
             <div className="max-w-7xl mx-auto px-6 text-center">
                 <div className="flex flex-col items-center mb-20">
                     <div className="flex items-center gap-2 text-brandPurple font-black uppercase tracking-[0.3em] text-xs mb-6">

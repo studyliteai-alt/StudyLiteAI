@@ -22,7 +22,7 @@ export const SignUp = () => {
         }
         try {
             await signUp(email, password, name);
-            navigate('/dashboard');
+            navigate('/');
         } catch (err: any) {
             setError(err.message || 'Failed to create account');
         }

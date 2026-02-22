@@ -15,7 +15,7 @@ export const Login = () => {
         setError('');
         try {
             await logIn(email, password);
-            navigate('/dashboard');
+            navigate('/');
         } catch (err: any) {
             setError(err.message || 'Failed to login');
         }

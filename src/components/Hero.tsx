@@ -3,7 +3,7 @@ import { MagneticButton } from './MagneticButton';
 
 export const Hero = () => {
     return (
-        <section className="relative pt-20 pb-32 overflow-hidden">
+        <section className="relative pt-20 pb-32 bg-cream overflow-hidden">
             {/* Decorative SVG Illustrations */}
             <div className="absolute top-20 left-10 max-lg:top-4 max-lg:left-2 animate-float opacity-80 lg:block">
                 <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">

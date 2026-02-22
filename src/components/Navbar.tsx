@@ -15,12 +15,11 @@ export const Navbar = ({ onOpenModal }: NavbarProps) => {
         if (onOpenModal) {
             e.preventDefault();
             onOpenModal(type);
-            setIsOpen(false);
         }
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-cream/80 backdrop-blur-md border-b border-brandBlack/5">
+        <header className="sticky top-0 z-50 bg-cream backdrop-blur-md border-b border-brandBlack/5">
             <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                 <div className="flex items-center gap-12">
                     <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
@@ -33,9 +32,11 @@ export const Navbar = ({ onOpenModal }: NavbarProps) => {
                         studylite.ai
                     </Link>
                     <div className="hidden lg:flex items-center gap-8">
-                        <a href="#features" className="text-sm font-medium hover:text-brandPurple transition-colors">Features</a>
-                        <a href="#pricing" className="text-sm font-medium hover:text-brandPurple transition-colors">Pricing</a>
-                        <a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="text-sm font-medium hover:text-brandPurple transition-colors">About</a>
+                        <a href="#features" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Features</a>
+                        <a href="#pricing" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Pricing</a>
+                        <a href="#testimonials" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Testimonials</a>
+                        <a href="#team" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Team</a>
+                        <a href="#about" onClick={(e) => handleModalLink(e, 'about')} className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">About</a>
                     </div>
                 </div>
 
@@ -66,7 +67,9 @@ export const Navbar = ({ onOpenModal }: NavbarProps) => {
                     <div className="flex flex-col gap-4">
                         <a href="#features" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Features</a>
                         <a href="#pricing" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Pricing</a>
-                        <a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
+                        <a href="#testimonials" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Testimonials</a>
+                        <a href="#team" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Team</a>
+                        <a href="#about" onClick={(e) => { toggleMenu(); handleModalLink(e, 'about'); }} className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
                     </div>
                     <div className="pt-6 border-t border-brandBlack/5 flex flex-col gap-4">
                         <Link to="/login" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Log in</Link>

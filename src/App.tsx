@@ -8,24 +8,11 @@ import { SignUp } from './pages/auth/SignUp';
 import { Login } from './pages/auth/Login';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
 import { ResetPassword } from './pages/auth/ResetPassword';
-import { Dashboard } from './pages/dashboard/Dashboard';
-import { StudyHistory } from './pages/dashboard/StudyHistory';
-import { SingleSession } from './pages/dashboard/SingleSession';
-import { StudyWorkspace } from './pages/study/StudyWorkspace';
-import { Profile } from './pages/account/Profile';
 import { Pricing } from './pages/Pricing';
 import { Checkout } from './pages/checkout/Checkout';
 import { PaymentSuccess } from './pages/checkout/PaymentSuccess';
 import { PaymentFailed } from './pages/checkout/PaymentFailed';
-import { About } from './pages/info/About';
-import { Features } from './pages/info/Features';
-import { HelpCenter } from './pages/info/HelpCenter';
-import { Blog } from './pages/info/Blog';
-import { TermsOfService } from './pages/info/TermsOfService';
-import { PrivacyPolicy } from './pages/info/PrivacyPolicy';
-import { NotFound } from './pages/info/NotFound';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
-import { AdminRoute } from './components/AdminRoute';
+// NotFound removed as it was in the deleted info folder
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 function App() {
@@ -43,18 +30,6 @@ function App() {
                                 <Route path="/forgot-password" element={<ForgotPassword />} />
                                 <Route path="/reset-password" element={<ResetPassword />} />
 
-                                {/* App Screens - Professional Layout (Uses AppLayout internally) */}
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/history" element={<StudyHistory />} />
-                                <Route path="/study" element={<StudyWorkspace />} />
-                                <Route path="/profile" element={<Profile />} />
-                                <Route path="/session/:id" element={<SingleSession />} />
-
-                                {/* Admin Protected Routes */}
-                                <Route element={<AdminRoute />}>
-                                    <Route path="/admin" element={<AdminDashboard />} />
-                                </Route>
-
                                 {/* Main Layout Routes - With Navbar & Footer */}
                                 <Route element={<MainLayout />}>
                                     <Route path="/" element={<LandingPage />} />
@@ -62,13 +37,13 @@ function App() {
                                     <Route path="/checkout" element={<Checkout />} />
                                     <Route path="/success" element={<PaymentSuccess />} />
                                     <Route path="/failed" element={<PaymentFailed />} />
-                                    <Route path="/about" element={<About />} />
-                                    <Route path="/features" element={<Features />} />
-                                    <Route path="/help" element={<HelpCenter />} />
-                                    <Route path="/blog" element={<Blog />} />
-                                    <Route path="/terms" element={<TermsOfService />} />
-                                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                                    <Route path="*" element={<NotFound />} />
+                                    <Route path="*" element={
+                                        <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
+                                            <h1 className="text-4xl font-black mb-4">404</h1>
+                                            <p className="text-brandBlack/60 mb-8 font-medium">This page doesn't exist.</p>
+                                            <a href="/" className="bg-brandBlack text-white px-8 py-3 rounded-full font-bold">Go Home</a>
+                                        </div>
+                                    } />
                                 </Route>
                             </Routes>
                         </div>
