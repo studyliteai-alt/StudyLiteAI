@@ -57,11 +57,11 @@ export const Hero = () => {
                             Start Studying Free
                         </MagneticButton>
                     </Link>
-                    <Link to="/about">
+                    <a href="#how-it-works">
                         <MagneticButton className="bg-white border-2 border-brandBlack px-8 py-4 rounded-full font-bold hover:bg-brandBlack hover:text-white transition-all transform hover:-translate-y-1">
                             See How It Works
                         </MagneticButton>
-                    </Link>
+                    </a>
                 </div>
             </div>
         </section>

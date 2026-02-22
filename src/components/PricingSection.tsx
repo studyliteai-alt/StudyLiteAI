@@ -6,33 +6,34 @@ import { Link } from 'react-router-dom';
 export const PricingSection = () => {
     const plans = [
         {
-            name: 'Basic Plan (Free)',
+            name: 'Lite (Free)',
             price: 'Free',
-            desc: 'Basic summaries for everyday studying.',
-            features: ['5 summaries per day', 'Basic AI summaries', 'Short quizzes', 'Low data mode'],
+            desc: 'Essential AI help for everyday students.',
+            features: ['5 AI sessions / day', 'Basic AI summaries', 'Standard quizzes', 'Low data mode'],
             color: 'bg-white',
             btnColor: 'bg-brandBlack text-white',
             cta: 'Start Free'
         },
         {
-            name: 'Pro Plan',
-            price: '$3',
+            name: 'Pro Mastery',
+            price: '₦1,500',
             period: '/month',
-            desc: 'Unlimited summaries and advanced quizzes.',
-            features: ['Unlimited summaries', 'Advanced AI summaries', 'Full quizzes', 'Study history', 'Faster processing'],
+            desc: 'Unlock deeper insights and infinite study.',
+            features: ['Unlimited AI sessions', 'Advanced concept links', 'Mastery analytics', 'Study history', 'Faster AI priority'],
             color: 'bg-brandPurple/10 border-brandPurple',
             btnColor: 'bg-brandPurple text-white',
-            cta: 'Upgrade to Pro',
+            cta: 'Join Pro',
             popular: true
         },
         {
-            name: 'School Plan',
-            price: 'Custom',
-            desc: 'For institutions and larger groups.',
-            features: ['Multiple students', 'Shared access', 'School dashboards', 'Teacher tools (future)'],
+            name: 'Plus +',
+            price: '₦3,000',
+            period: '/month',
+            desc: 'The ultimate power-up for elite academic performance.',
+            features: ['Everything in Pro', 'PDF & Doc uploads', 'Custom flashcard sets', 'Priority support', 'Early access to Labs'],
             color: 'bg-brandYellow/10 border-brandYellow',
             btnColor: 'bg-brandYellow text-brandBlack',
-            cta: 'Contact Us'
+            cta: 'Get Plus'
         }
     ];
 

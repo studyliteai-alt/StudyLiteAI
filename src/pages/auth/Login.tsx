@@ -1,12 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { logIn } from '../../services/auth';
 import { useState } from 'react';
-import { Mail, Lock, ArrowLeft, Brain, Zap, Clock } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Brain, Zap, Clock, Eye, EyeOff } from 'lucide-react';
 
 export const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ export const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-cream font-sans selection:bg-brandPurple/20 text-brandBlack overflow-x-hidden">
+        <div className="min-h-screen flex pt-10 bg-cream font-sans selection:bg-brandPurple/20 text-brandBlack overflow-x-hidden">
             {/* Back to Home Button */}
             <Link to="/" className="absolute top-6 left-6 z-50 flex items-center gap-2 text-brandBlack/40 hover:text-brandBlack transition-colors font-bold text-xs group">
                 <div className="w-7 h-7 rounded-full border border-brandBlack/5 flex items-center justify-center group-hover:bg-white transition-all">
@@ -31,7 +32,7 @@ export const Login = () => {
             </Link>
 
             {/* Left Section: Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative z-10">
+            <div className="w-full lg:w-1/2 flex items-center justify-center max-lg:px-6 lg:p-12 relative z-10">
                 <div className="max-w-[340px] w-full animate-reveal py-4">
                     {/* Brand Header */}
                     <div className="mb-8">
@@ -103,13 +104,20 @@ export const Login = () => {
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brandBlack/20 group-focus-within:text-brandPurple transition-colors" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     required
-                                    className="w-full bg-white border-2 border-brandBlack/5 focus:border-brandPurple/30 rounded-xl py-3 pl-11 pr-4 outline-none transition-all font-bold text-brandBlack placeholder:text-brandBlack/10 text-sm shadow-sm"
+                                    className="w-full bg-white border-2 border-brandBlack/5 focus:border-brandPurple/30 rounded-xl py-3 pl-11 pr-12 outline-none transition-all font-bold text-brandBlack placeholder:text-brandBlack/10 text-sm shadow-sm"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-brandBlack/20 hover:text-brandPurple transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
                             </div>
                         </div>
 
@@ -121,7 +129,7 @@ export const Login = () => {
             </div>
 
             {/* Right Section: Value-Driven Experience */}
-            <div className="hidden lg:flex w-1/2 bg-cream relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
+            <div className="hidden lg:flex w-1/2 b relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
                 {/* Stage Base */}
                 <div className="absolute bottom-[20%] w-[85%] h-[400px] bg-brandPurple rounded-[48px] transform rotate-[-8deg] origin-bottom-right shadow-2xl skew-x-[-12deg] -right-16">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />

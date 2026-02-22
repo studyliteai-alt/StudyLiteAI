@@ -2,10 +2,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
-export const Navbar = () => {
+interface NavbarProps {
+    onOpenModal?: (type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => void;
+}
+
+export const Navbar = ({ onOpenModal }: NavbarProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
+
+    const handleModalLink = (e: React.MouseEvent, type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => {
+        if (onOpenModal) {
+            e.preventDefault();
+            onOpenModal(type);
+            setIsOpen(false);
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 bg-cream/80 backdrop-blur-md border-b border-brandBlack/5">
@@ -23,7 +35,7 @@ export const Navbar = () => {
                     <div className="hidden lg:flex items-center gap-8">
                         <a href="#features" className="text-sm font-medium hover:text-brandPurple transition-colors">Features</a>
                         <a href="#pricing" className="text-sm font-medium hover:text-brandPurple transition-colors">Pricing</a>
-                        <a href="#about" className="text-sm font-medium hover:text-brandPurple transition-colors">About</a>
+                        <a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="text-sm font-medium hover:text-brandPurple transition-colors">About</a>
                     </div>
                 </div>
 
@@ -54,7 +66,7 @@ export const Navbar = () => {
                     <div className="flex flex-col gap-4">
                         <a href="#features" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Features</a>
                         <a href="#pricing" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Pricing</a>
-                        <a href="#about" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
+                        <a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
                     </div>
                     <div className="pt-6 border-t border-brandBlack/5 flex flex-col gap-4">
                         <Link to="/login" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Log in</Link>

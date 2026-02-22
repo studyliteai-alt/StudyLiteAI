@@ -1,7 +1,18 @@
 import { Link } from 'react-router-dom';
 import { Mail, Github, Twitter, Linkedin } from 'lucide-react';
 
-export const Footer = () => {
+interface FooterProps {
+    onOpenModal?: (type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => void;
+}
+
+export const Footer = ({ onOpenModal }: FooterProps) => {
+    const handleModalLink = (e: React.MouseEvent, type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => {
+        if (onOpenModal) {
+            e.preventDefault();
+            onOpenModal(type);
+        }
+    };
+
     return (
         <footer className="bg-brandBlack text-white pt-24 pb-12 overflow-hidden relative">
 
@@ -52,7 +63,6 @@ export const Footer = () => {
                         <ul className="space-y-4 text-white/50 font-medium">
                             <li><Link to="/study" className="hover:text-brandPurple transition-colors">Study Workspace</Link></li>
                             <li><Link to="/history" className="hover:text-brandPurple transition-colors">Past Sessions</Link></li>
-                            <li><Link to="/features" className="hover:text-brandPurple transition-colors">AI Magic</Link></li>
                             <li><Link to="/dashboard" className="hover:text-brandPurple transition-colors">Analytics</Link></li>
                         </ul>
                     </div>
@@ -61,10 +71,10 @@ export const Footer = () => {
                     <div>
                         <h4 className="font-bold text-lg mb-8">Company</h4>
                         <ul className="space-y-4 text-white/50 font-medium">
-                            <li><Link to="/about" className="hover:text-brandPurple transition-colors">Our Story</Link></li>
-                            <li><Link to="/pricing" className="hover:text-brandPurple transition-colors">Pricing</Link></li>
-                            <li><Link to="/blog" className="hover:text-brandPurple transition-colors">Journal</Link></li>
-                            <li><Link to="/help" className="hover:text-brandPurple transition-colors">Support</Link></li>
+                            <li><a href="/about" onClick={(e) => handleModalLink(e, 'about')} className="hover:text-brandPurple transition-colors">Our Story</a></li>
+                            <li><a href="/help" onClick={(e) => handleModalLink(e, 'help')} className="hover:text-brandPurple transition-colors">Support</a></li>
+                            <li><a href="/blog" onClick={(e) => handleModalLink(e, 'blog')} className="hover:text-brandPurple transition-colors">Journal</a></li>
+                            <li><a href="#pricing" className="hover:text-brandPurple transition-colors">Pricing</a></li>
                         </ul>
                     </div>
 
@@ -91,11 +101,12 @@ export const Footer = () => {
                 <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="flex flex-col md:flex-row items-center gap-6">
                         <p className="text-white/40 text-sm italic font-medium">
-                            Built with ❤️ for students.
+                            Built with ❤️ for students globally.
                         </p>
                         <div className="flex gap-6">
-                            <Link to="/terms" className="text-white/40 text-xs hover:text-white transition-colors">Terms of Service</Link>
-                            <Link to="/privacy" className="text-white/40 text-xs hover:text-white transition-colors">Privacy Policy</Link>
+                            <a href="/terms" onClick={(e) => handleModalLink(e, 'terms')} className="text-white/40 text-xs hover:text-white transition-colors">Terms of Service</a>
+                            <a href="/privacy" onClick={(e) => handleModalLink(e, 'privacy')} className="text-white/40 text-xs hover:text-white transition-colors">Privacy Policy</a>
+                            <a href="/help" onClick={(e) => handleModalLink(e, 'cookie')} className="text-white/40 text-xs hover:text-white transition-colors">Cookie Policy</a>
                         </div>
                     </div>
                     <p className="text-white/40 text-sm font-medium">
