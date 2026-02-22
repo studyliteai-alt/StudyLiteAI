@@ -27,7 +27,7 @@ export const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-cream pt-10 font-sans selection:bg-brandPurple/20 overflow-hidden text-brandBlack">
+        <div className="min-h-screen flex bg-cream pt-10 font-sans selection:bg-brandPurple/20 text-brandBlack overflow-x-hidden">
             {/* Back to Home Button */}
             <Link to="/" className="absolute top-6 left-6 z-50 flex items-center gap-2 text-brandBlack/40 hover:text-brandBlack transition-colors font-bold text-xs group">
                 <div className="w-7 h-7 rounded-full border border-brandBlack/5 flex items-center justify-center group-hover:bg-white transition-all">
@@ -37,7 +37,7 @@ export const SignUp = () => {
             </Link>
 
             {/* Left Section: Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative z-10 overflow-y-auto scrollbar-hide">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 relative z-10">
                 <div className="max-w-[340px] w-full animate-reveal py-4">
                     {/* Brand Header */}
                     <div className="mb-6">

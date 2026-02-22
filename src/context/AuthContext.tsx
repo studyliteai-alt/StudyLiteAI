@@ -27,7 +27,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             setLoading(false);
         });
-        return unsubscribe;
+
+        // Safety timeout: If Firebase doesn't respond in 5 seconds, stop loading
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 5000);
+
+        return () => {
+            unsubscribe();
+            clearTimeout(timeout);
+        };
     }, []);
 
     return (
