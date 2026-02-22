@@ -9,6 +9,7 @@ import { Testimonials } from '../components/Testimonials';
 import { TeamSection } from '../components/TeamSection';
 import { PricingSection } from '../components/PricingSection';
 import { AboutSection } from '../components/AboutSection';
+import { ContactSection } from '../components/ContactSection';
 import { Link } from 'react-router-dom';
 import { MagneticButton } from '../components/MagneticButton';
 
@@ -37,6 +38,8 @@ export const LandingPage = () => {
             <Testimonials />
 
             <TeamSection />
+
+            <ContactSection />
 
             {/* Final CTA */}
             <Section className="py-40 bg-brandYellow border-y-4 border-brandBlack shadow-[0_-20px_0px_0px_rgba(0,0,0,0.1)]">
