@@ -74,7 +74,7 @@ export const StudyWorkspace = () => {
                                 </div>
 
                                 <div className="flex-1">
-                                    <label className="block text-[10px] font-bold text-brandBlack/40 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <label className=" text-[10px] font-bold text-brandBlack/40 uppercase tracking-widest mb-2 flex items-center gap-2">
                                         <Target size={14} /> Exam Mode
                                     </label>
                                     <select
