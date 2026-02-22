@@ -27,7 +27,7 @@ export const SignUp = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-[#FFF5F5] pt-10 font-sans selection:bg-brandPurple/20 overflow-hidden text-brandBlack">
+        <div className="min-h-screen flex bg-cream pt-10 font-sans selection:bg-brandPurple/20 overflow-hidden text-brandBlack">
             {/* Back to Home Button */}
             <Link to="/" className="absolute top-6 left-6 z-50 flex items-center gap-2 text-brandBlack/40 hover:text-brandBlack transition-colors font-bold text-xs group">
                 <div className="w-7 h-7 rounded-full border border-brandBlack/5 flex items-center justify-center group-hover:bg-white transition-all">
@@ -155,7 +155,7 @@ export const SignUp = () => {
             </div>
 
             {/* Right Section: Value-Driven Experience */}
-            <div className="hidden lg:flex w-1/2 bg-[#FFF5F5] relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
+            <div className="hidden lg:flex w-1/2 bg-cream relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
                 {/* Stage Base */}
                 <div className="absolute bottom-[20%] w-[85%] h-[400px] bg-brandPurple rounded-[48px] transform rotate-[-8deg] origin-bottom-right shadow-2xl skew-x-[-12deg] -right-16">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
