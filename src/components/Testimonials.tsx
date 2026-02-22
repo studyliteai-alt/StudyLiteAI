@@ -1,7 +1,7 @@
 import { Star, MessageSquare, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { Section } from './Section';
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export const Testimonials = () => {
     const reviews = [
@@ -100,7 +100,7 @@ export const Testimonials = () => {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-4 bg-brandPurple/5 p-4 rounded-full border-2 border-brandBlack hidden sm:flex">
+                        <div className="items-center gap-4 bg-brandPurple/5 p-4 rounded-full border-2 border-brandBlack hidden sm:flex">
                             <div className="flex -space-x-3">
                                 {reviews.slice(0, 4).map((r, i) => (
                                     <div key={i} className={`w-10 h-10 rounded-full ${r.color} border-2 border-brandBlack flex items-center justify-center text-[10px] text-white font-black`}>
