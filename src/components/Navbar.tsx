@@ -1,22 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-interface NavbarProps {
-    onOpenModal?: (type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => void;
-}
-
-export const Navbar = ({ onOpenModal }: NavbarProps) => {
+export const Navbar = () => {
+    const { user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
-
-    const handleModalLink = (e: React.MouseEvent, type: 'privacy' | 'terms' | 'cookie' | 'about' | 'help' | 'blog') => {
-        if (onOpenModal) {
-            e.preventDefault();
-            onOpenModal(type);
-        }
-    };
 
     return (
         <header className="sticky top-0 z-50 bg-cream backdrop-blur-md border-b border-brandBlack/5">
@@ -36,16 +27,25 @@ export const Navbar = ({ onOpenModal }: NavbarProps) => {
                         <a href="#pricing" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Pricing</a>
                         <a href="#testimonials" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Testimonials</a>
                         <a href="#team" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">Team</a>
-                        <a href="#about" onClick={(e) => handleModalLink(e, 'about')} className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">About</a>
+                        <a href="#about" className="text-xs lg:text-sm font-medium hover:text-brandPurple transition-colors">About</a>
                     </div>
                 </div>
 
                 {/* Desktop Actions */}
                 <div className="hidden lg:flex items-center gap-6">
-                    <Link to="/login" className="text-sm font-medium hover:text-brandPurple transition-colors">Log in</Link>
-                    <Link to="/signup" className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95">
-                        Get Started
-                    </Link>
+                    {user ? (
+                        <Link to="/dashboard" className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95 flex items-center gap-2">
+                            <LayoutDashboard size={16} />
+                            Go to Dashboard
+                        </Link>
+                    ) : (
+                        <>
+                            <Link to="/login" className="text-sm font-medium hover:text-brandPurple transition-colors">Log in</Link>
+                            <Link to="/signup" className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95">
+                                Get Started
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -69,13 +69,22 @@ export const Navbar = ({ onOpenModal }: NavbarProps) => {
                         <a href="#pricing" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Pricing</a>
                         <a href="#testimonials" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Testimonials</a>
                         <a href="#team" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Team</a>
-                        <a href="#about" onClick={(e) => { toggleMenu(); handleModalLink(e, 'about'); }} className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
+                        <a href="#about" className="text-lg font-bold hover:text-brandPurple transition-colors">About</a>
                     </div>
                     <div className="pt-6 border-t border-brandBlack/5 flex flex-col gap-4">
-                        <Link to="/login" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Log in</Link>
-                        <Link to="/signup" onClick={toggleMenu} className="bg-brandBlack text-white px-6 py-4 rounded-xl text-center font-bold hover:bg-brandPurple transition-all">
-                            Get Started
-                        </Link>
+                        {user ? (
+                            <Link to="/dashboard" onClick={toggleMenu} className="bg-brandBlack text-white px-6 py-4 rounded-xl text-center font-bold hover:bg-brandPurple transition-all flex items-center justify-center gap-2">
+                                <LayoutDashboard size={20} />
+                                Dashboard
+                            </Link>
+                        ) : (
+                            <>
+                                <Link to="/login" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Log in</Link>
+                                <Link to="/signup" onClick={toggleMenu} className="bg-brandBlack text-white px-6 py-4 rounded-xl text-center font-bold hover:bg-brandPurple transition-all">
+                                    Get Started
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

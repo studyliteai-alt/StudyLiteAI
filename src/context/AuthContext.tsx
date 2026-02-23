@@ -20,8 +20,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const unsubscribe = subscribeToAuth(async (currentUser) => {
             setUser(currentUser);
             if (currentUser) {
-                const userProfile = await getUserProfile(currentUser.uid);
-                setProfile(userProfile);
+                try {
+                    // Try to get profile, but don't let it block app initialization if offline
+                    const userProfile = await getUserProfile(currentUser.uid);
+                    setProfile(userProfile);
+                } catch (error) {
+                    console.error("[AuthContext] Error fetching profile during initialization:", error);
+                }
             } else {
                 setProfile(null);
             }
