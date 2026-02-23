@@ -33,8 +33,12 @@ export const settingsService = {
                 return docSnap.data() as UserSettings;
             }
             return null;
-        } catch (error) {
-            console.error("Error fetching settings:", error);
+        } catch (error: any) {
+            if (error.code === 'unavailable' || error.message?.includes('offline')) {
+                console.warn("[settingsService] Client is offline, using default settings or cache.");
+            } else {
+                console.error("Error fetching settings:", error);
+            }
             return null;
         }
     }

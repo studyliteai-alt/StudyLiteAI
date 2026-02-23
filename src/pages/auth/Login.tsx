@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { logIn, signInWithGoogle, signInWithApple } from '../../services/auth';
-import { useState } from 'react';
-import { Mail, Lock, ArrowLeft, Brain, Zap, Clock, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, Lock, ArrowLeft, Brain, Zap, Clock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -9,15 +11,33 @@ export const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
+    const { user, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (user && !authLoading) {
+            navigate('/dashboard');
+        }
+    }, [user, authLoading, navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         try {
             await logIn(email, password);
+            showToast("Welcome Back!", "Successfully logged in.", "success");
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Failed to login');
+            console.error("Login Error:", err);
+            const msg = err.code === 'auth/user-not-found' ? 'Account not found' :
+                err.code === 'auth/wrong-password' ? 'Incorrect password' :
+                    err.message || 'Failed to login';
+            setError(msg);
+            showToast("Login Failed", msg, "error");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -25,9 +45,11 @@ export const Login = () => {
         setError('');
         try {
             await signInWithGoogle();
+            showToast("Success", "Signed in with Google.", "success");
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in with Google');
+            showToast("Social Login Failed", "Check your connection and try again.", "error");
         }
     };
 
@@ -35,9 +57,11 @@ export const Login = () => {
         setError('');
         try {
             await signInWithApple();
+            showToast("Success", "Signed in with Apple.", "success");
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in with Apple');
+            showToast("Social Login Failed", "Check your connection and try again.", "error");
         }
     };
 
@@ -147,8 +171,16 @@ export const Login = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="w-full bg-brandBlack text-white py-4 rounded-xl font-black text-base hover:bg-brandPurple transition-all transform active:scale-[0.98] shadow-lg shadow-brandBlack/5 hover:shadow-brandPurple/20 flex items-center justify-center gap-2 group mt-2">
-                            Sign in
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full bg-brandBlack text-white py-4 rounded-xl font-black text-base hover:bg-brandPurple transition-all transform active:scale-[0.98] shadow-lg shadow-brandBlack/5 hover:shadow-brandPurple/20 flex items-center justify-center gap-2 group mt-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            {loading ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : (
+                                "Sign in"
+                            )}
                         </button>
                     </form>
                 </div>

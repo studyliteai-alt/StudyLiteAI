@@ -23,8 +23,12 @@ export const studySessionService = {
                 createdAt: serverTimestamp(),
             });
             return docRef.id;
-        } catch (error) {
-            console.error("Error saving study session:", error);
+        } catch (error: any) {
+            if (error.code === 'unavailable' || error.message?.includes('offline')) {
+                console.warn("[studySessionService] Offline: Session will be synced when online.");
+            } else {
+                console.error("Error saving study session:", error);
+            }
             throw error;
         }
     },
@@ -50,8 +54,12 @@ export const studySessionService = {
                     color: data.color
                 } as unknown as Session;
             });
-        } catch (error) {
-            console.error("Error fetching study sessions:", error);
+        } catch (error: any) {
+            if (error.code === 'unavailable' || error.message?.includes('offline')) {
+                console.warn("[studySessionService] Offline: Using local cache for sessions.");
+            } else {
+                console.error("Error fetching study sessions:", error);
+            }
             return [];
         }
     }

@@ -23,8 +23,12 @@ export const quizService = {
                 createdAt: serverTimestamp(),
             });
             return docRef.id;
-        } catch (error) {
-            console.error("Error saving quiz result:", error);
+        } catch (error: any) {
+            if (error.code === 'unavailable' || error.message?.includes('offline')) {
+                console.warn("[quizService] Offline: Quiz result will be synced when online.");
+            } else {
+                console.error("Error saving quiz result:", error);
+            }
             throw error;
         }
     },
@@ -48,8 +52,12 @@ export const quizService = {
                     status: data.status
                 } as unknown as QuizResult;
             });
-        } catch (error) {
-            console.error("Error fetching quiz history:", error);
+        } catch (error: any) {
+            if (error.code === 'unavailable' || error.message?.includes('offline')) {
+                console.warn("[quizService] Offline: Using local cache for quiz history.");
+            } else {
+                console.error("Error fetching quiz history:", error);
+            }
             return [];
         }
     }

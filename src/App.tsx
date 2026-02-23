@@ -14,7 +14,7 @@ import { Checkout } from './pages/checkout/Checkout';
 import { PaymentSuccess } from './pages/checkout/PaymentSuccess';
 import { PaymentFailed } from './pages/checkout/PaymentFailed';
 import Dashboard from './pages/Dashboard';
-// NotFound removed as it was in the deleted info folder
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 function App() {
@@ -27,7 +27,11 @@ function App() {
                             <ScrollToTop />
                             <div className="min-h-screen bg-cream text-brandBlack font-sans selection:bg-brandPurple selection:text-white flex flex-col">
                                 <Routes>
-                                    <Route path="/dashboard" element={<Dashboard />} />
+                                    <Route path="/dashboard" element={
+                                        <ProtectedRoute>
+                                            <Dashboard />
+                                        </ProtectedRoute>
+                                    } />
                                     {/* Auth Routes - No Navbar/Footer */}
                                     <Route path="/signup" element={<SignUp />} />
                                     <Route path="/login" element={<Login />} />

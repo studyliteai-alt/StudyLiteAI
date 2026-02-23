@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { signUp, signInWithGoogle, signInWithApple } from '../../services/auth';
-import { useState } from 'react';
-import { Mail, Lock, User, ArrowLeft, UserPlus, Target, Star, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, Lock, User, ArrowLeft, UserPlus, Target, Star, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const SignUp = () => {
     const navigate = useNavigate();
@@ -12,19 +14,37 @@ export const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
+    const { user, loading: authLoading } = useAuth();
+
+    useEffect(() => {
+        if (user && !authLoading) {
+            navigate('/dashboard');
+        }
+    }, [user, authLoading, navigate]);
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (password !== confirmPassword) {
             setError('Passwords do not match');
+            showToast("Signup Error", "Passwords do not match.", "error");
             return;
         }
+        setLoading(true);
         try {
             await signUp(email, password, name);
+            showToast("Account Created!", "Welcome to StudyLite AI.", "success");
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Failed to create account');
+            console.error("Signup Error:", err);
+            const msg = err.code === 'auth/email-already-in-use' ? 'Email already in use' :
+                err.message || 'Failed to create account';
+            setError(msg);
+            showToast("Signup Failed", msg, "error");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -32,9 +52,11 @@ export const SignUp = () => {
         setError('');
         try {
             await signInWithGoogle();
+            showToast("Success", "Signed in with Google.", "success");
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in with Google');
+            showToast("Social Login Failed", "Check your connection and try again.", "error");
         }
     };
 
@@ -42,9 +64,11 @@ export const SignUp = () => {
         setError('');
         try {
             await signInWithApple();
+            showToast("Success", "Signed in with Apple.", "success");
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in with Apple');
+            showToast("Social Login Failed", "Check your connection and try again.", "error");
         }
     };
 
@@ -189,8 +213,16 @@ export const SignUp = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="w-full bg-brandBlack text-white py-4 rounded-xl font-black text-base hover:bg-brandPurple transition-all transform active:scale-[0.98] shadow-lg shadow-brandBlack/5 hover:shadow-brandPurple/20 flex items-center justify-center gap-2 group mt-2">
-                            Join Now
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full bg-brandBlack text-white py-4 rounded-xl font-black text-base hover:bg-brandPurple transition-all transform active:scale-[0.98] shadow-lg shadow-brandBlack/5 hover:shadow-brandPurple/20 flex items-center justify-center gap-2 group mt-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            {loading ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : (
+                                "Join Now"
+                            )}
                         </button>
                     </form>
                 </div>

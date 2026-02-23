@@ -39,8 +39,12 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
             return docSnap.data() as UserProfile;
         }
         return null;
-    } catch (error) {
-        console.error("Error fetching user profile:", error);
+    } catch (error: any) {
+        if (error.code === 'unavailable' || error.message?.includes('offline')) {
+            console.warn("[authService] Client is offline, using cache for profile.");
+        } else {
+            console.error("Error fetching user profile:", error);
+        }
         return null;
     }
 };
@@ -104,7 +108,15 @@ const ensureUserProfile = async (user: User) => {
             role: 'user',
             createdAt: new Date().toISOString()
         };
-        await setDoc(docRef, profile);
+        try {
+            await setDoc(docRef, profile);
+        } catch (err: any) {
+            if (err.code === 'unavailable' || err.message?.includes('offline')) {
+                console.warn("[authService] Offline: Cannot ensure profile on cloud, will sync later.");
+            } else {
+                console.error("Error ensuring user profile:", err);
+            }
+        }
     }
 };
 
