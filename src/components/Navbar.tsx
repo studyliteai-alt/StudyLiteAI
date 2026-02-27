@@ -67,7 +67,7 @@ export const Navbar = () => {
             <div
                 id="mobile-menu"
                 className={`
-                    lg:hidden fixed inset-x-0 top-20 bg-cream/95 backdrop-blur-2xl border-b border-brandBlack/10 transition-all duration-300 ease-in-out z-40
+                    lg:hidden fixed inset-x-0 top-20 bg-cream backdrop-blur-2xl border-b border-brandBlack/10 transition-all duration-300 ease-in-out z-40
                     ${isOpen ? 'opacity-100 translate-y-0 shadow-2xl' : 'opacity-0 -translate-y-4 pointer-events-none'}
                 `}
             >
