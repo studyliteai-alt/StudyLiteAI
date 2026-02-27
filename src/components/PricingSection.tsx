@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 export const PricingSection = () => {
     const plans = [
         {
+            id: 'free',
             name: 'Lite (Free)',
             price: 'Free',
             desc: 'Essential AI help for everyday students.',
@@ -15,6 +16,7 @@ export const PricingSection = () => {
             cta: 'Start Free'
         },
         {
+            id: 'pro',
             name: 'Pro Mastery',
             price: '₦1,500',
             period: '/month',
@@ -26,6 +28,7 @@ export const PricingSection = () => {
             popular: true
         },
         {
+            id: 'plus',
             name: 'Plus +',
             price: '₦3,000',
             period: '/month',
@@ -74,7 +77,7 @@ export const PricingSection = () => {
                                 ))}
                             </ul>
 
-                            <Link to="/checkout" className="mt-auto">
+                            <Link to={`/checkout?plan=${plan.id}`} className="mt-auto">
                                 <MagneticButton className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest border-2 border-brandBlack transition-all ${plan.btnColor}`}>
                                     {plan.cta}
                                 </MagneticButton>

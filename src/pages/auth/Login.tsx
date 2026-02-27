@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { logIn, signInWithGoogle, signInWithApple } from '../../services/auth';
+import { logIn, signInWithGoogleOnly, signInWithAppleOnly } from '../../services/auth';
 import { useState, useEffect } from 'react';
-import { Mail, Lock, ArrowLeft, Brain, Zap, Clock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Brain, Zap, Clock, Eye, EyeOff, Loader2, AlertTriangle } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,6 +12,7 @@ export const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [accountBanner, setAccountBanner] = useState<{ type: 'disabled' | 'deleted' } | null>(null);
     const { showToast } = useToast();
     const { user, loading: authLoading } = useAuth();
 
@@ -20,6 +21,15 @@ export const Login = () => {
             navigate('/dashboard');
         }
     }, [user, authLoading, navigate]);
+
+    // Check if user was force-signed-out due to a disabled/deleted account
+    useEffect(() => {
+        const reason = sessionStorage.getItem('auth_signout_reason') as 'disabled' | 'deleted' | null;
+        if (reason === 'disabled' || reason === 'deleted') {
+            setAccountBanner({ type: reason });
+            sessionStorage.removeItem('auth_signout_reason');
+        }
+    }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,12 +40,14 @@ export const Login = () => {
             showToast("Welcome Back!", "Successfully logged in.", "success");
             navigate('/dashboard');
         } catch (err: any) {
-            console.error("Login Error:", err);
-            const msg = err.code === 'auth/user-not-found' ? 'Account not found' :
-                err.code === 'auth/wrong-password' ? 'Incorrect password' :
-                    err.message || 'Failed to login';
-            setError(msg);
-            showToast("Login Failed", msg, "error");
+            console.error("Login Error:", err.code);
+            if (err.code === 'auth/user-disabled') {
+                setAccountBanner({ type: 'disabled' });
+                showToast("Account Disabled", "Your account has been suspended.", "error");
+            } else {
+                setError('Invalid email or password');
+                showToast("Login Failed", "Invalid email or password", "error");
+            }
         } finally {
             setLoading(false);
         }
@@ -44,24 +56,44 @@ export const Login = () => {
     const handleGoogleLogin = async () => {
         setError('');
         try {
-            await signInWithGoogle();
-            showToast("Success", "Signed in with Google.", "success");
+            await signInWithGoogleOnly();
+            showToast("Welcome Back!", "Signed in with Google.", "success");
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Failed to sign in with Google');
-            showToast("Social Login Failed", "Check your connection and try again.", "error");
+            console.error("Social Login Error:", err.code || err.message);
+            if (err.code === 'auth/user-disabled') {
+                setAccountBanner({ type: 'disabled' });
+                showToast("Account Disabled", "Your account has been suspended.", "error");
+            } else if (err.message === 'account-not-found') {
+                const msg = "No account found. Please sign up first!";
+                setError(msg);
+                showToast("No Account Found", msg, "warning");
+            } else {
+                setError("Failed to sign in. Please try again.");
+                showToast("Login Failed", "Failed to sign in. Please try again.", "error");
+            }
         }
     };
 
     const handleAppleLogin = async () => {
         setError('');
         try {
-            await signInWithApple();
-            showToast("Success", "Signed in with Apple.", "success");
+            await signInWithAppleOnly();
+            showToast("Welcome Back!", "Signed in with Apple.", "success");
             navigate('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Failed to sign in with Apple');
-            showToast("Social Login Failed", "Check your connection and try again.", "error");
+            console.error("Social Login Error:", err.code || err.message);
+            if (err.code === 'auth/user-disabled') {
+                setAccountBanner({ type: 'disabled' });
+                showToast("Account Disabled", "Your account has been suspended.", "error");
+            } else if (err.message === 'account-not-found') {
+                const msg = "No account found. Please sign up first!";
+                setError(msg);
+                showToast("No Account Found", msg, "warning");
+            } else {
+                setError("Failed to sign in. Please try again.");
+                showToast("Login Failed", "Failed to sign in. Please try again.", "error");
+            }
         }
     };
 
@@ -99,10 +131,10 @@ export const Login = () => {
                     </div>
 
                     {/* OAuth Section */}
-                    <div className="flex gap-3 mb-8">
+                    <div className="flex gap-4 mb-8">
                         <button
                             onClick={handleGoogleLogin}
-                            className="flex-1 flex items-center justify-center gap-2.5 py-3 px-4 bg-white border border-brandBlack/5 rounded-xl font-black text-xs hover:border-brandPurple/30 transition-all transform active:scale-95 group shadow-sm"
+                            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-white border border-brandBlack/5 rounded-xl font-black text-xs hover:border-brandPurple/30 transition-all transform active:scale-95 group shadow-sm"
                         >
                             <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -114,7 +146,7 @@ export const Login = () => {
                         </button>
                         <button
                             onClick={handleAppleLogin}
-                            className="flex-1 flex items-center justify-center gap-2.5 py-3 px-4 bg-white border border-brandBlack/5 rounded-xl font-black text-xs hover:border-brandPurple/30 transition-all transform active:scale-95 group shadow-sm"
+                            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-white border border-brandBlack/5 rounded-xl font-black text-xs hover:border-brandPurple/30 transition-all transform active:scale-95 group shadow-sm"
                         >
                             <svg width="18" height="18" viewBox="0 0 256 315" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M213.803 167.03c.442 47.83 41.739 64.29 42.102 64.484-.343.935-6.592 22.599-21.711 44.645-13.084 19.071-26.635 38.081-48.177 38.48-21.144.399-28.006-12.554-52.179-12.554-24.136 0-31.782 12.155-52.179 12.917-20.767.765-36.435-20.675-49.619-39.677C5.071 241.657-14.896 173.811 11.026 128.847c12.884-22.383 35.843-36.547 60.709-36.908 19.026-.362 36.96 12.822 48.625 12.822 11.666 0 33.328-15.86 56.41-13.486 9.682.404 36.883 3.903 54.346 29.441-1.402.87-32.355 18.824-37.313 46.314M164.062 60.67c10.334-12.583 17.291-30.012 15.397-47.37-14.931.597-33.012 9.941-43.725 22.414-9.61 11.137-18.006 28.983-15.728 46.012 16.657 1.295 33.722-8.473 44.056-21.056" fill="#000000" />
@@ -122,6 +154,25 @@ export const Login = () => {
                             <span>Apple</span>
                         </button>
                     </div>
+
+                    {/* Account disabled / deleted banner */}
+                    {accountBanner && (
+                        <div className="mb-6 bg-orange-50 border-2 border-orange-200 p-4 rounded-2xl flex items-start gap-3">
+                            <AlertTriangle size={18} className="text-orange-500 flex-shrink-0 mt-0.5" />
+                            <div>
+                                <p className="font-black text-sm text-orange-700">
+                                    {accountBanner.type === 'disabled'
+                                        ? 'Your account has been disabled'
+                                        : 'Your account no longer exists'}
+                                </p>
+                                <p className="text-xs font-medium text-orange-600/80 mt-0.5">
+                                    {accountBanner.type === 'disabled'
+                                        ? 'Access to your account has been suspended. Please contact support if you believe this is a mistake.'
+                                        : 'This account was deleted. You can create a new one below.'}
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     <form className="space-y-4" onSubmit={handleLogin}>
                         {error && (
@@ -131,8 +182,8 @@ export const Login = () => {
                             </div>
                         )}
 
-                        <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-brandBlack/30 ml-2">Email Address</label>
+                        <div className="space-y-2">
+                            <label className="text-[12px] font-black uppercase tracking-widest text-brandBlack/30 ml-2">Email Address</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brandBlack/20 group-focus-within:text-brandPurple transition-colors" />
                                 <input
@@ -146,10 +197,10 @@ export const Login = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-2">
                             <div className="flex justify-between items-center ml-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-brandBlack/30">Password</label>
-                                <Link to="/forgot-password" title="Forgot" className="text-[10px] font-black text-brandPurple hover:underline">Forgot?</Link>
+                                <label className="text-[12px] font-black uppercase tracking-widest text-brandBlack/30">Password</label>
+                                <Link to="/forgot-password" title="Forgot" className="text-[12px] font-black text-brandPurple hover:underline">Forgot?</Link>
                             </div>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brandBlack/20 group-focus-within:text-brandPurple transition-colors" />
@@ -165,6 +216,7 @@ export const Login = () => {
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-brandBlack/20 hover:text-brandPurple transition-colors"
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
                                 >
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
@@ -187,7 +239,7 @@ export const Login = () => {
             </div>
 
             {/* Right Section: Value-Driven Experience */}
-            <div className="hidden lg:flex w-1/2 b relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
+            <div className="hidden lg:flex w-1/2 bg-cream relative items-center justify-center overflow-hidden border-l border-brandBlack/5">
                 {/* Stage Base */}
                 <div className="absolute bottom-[20%] w-[85%] h-[400px] bg-brandPurple rounded-[48px] transform rotate-[-8deg] origin-bottom-right shadow-2xl skew-x-[-12deg] -right-16">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />

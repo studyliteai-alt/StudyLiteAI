@@ -21,7 +21,7 @@ export const Footer = ({ onOpenModal }: FooterProps) => {
         setStatus('loading');
 
         const formData = new FormData(e.currentTarget);
-        formData.append("access_key", "eb9cef46-c37d-40cc-85fe-f28fd9f45a63");
+        formData.append("access_key", import.meta.env.VITE_WEB3FORMS_KEY || "eb9cef46-c37d-40cc-85fe-f28fd9f45a63");
         formData.append("subject", "New Newsletter Subscription - StudyLite AI");
         formData.append("from_name", "StudyLite AI Newsletter");
 

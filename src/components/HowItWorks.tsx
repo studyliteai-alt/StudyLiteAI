@@ -39,7 +39,10 @@ export const HowItWorks = () => {
                             <div className="absolute -top-6 -left-6 w-12 h-12 bg-white text-brandBlack rounded-full flex items-center justify-center font-bold text-xl border-4 border-brandBlack">
                                 {i + 1}
                             </div>
-                            <div className={`w-16 h-16 rounded-2xl bg-${step.color} flex items-center justify-center mb-8 border-2 border-white`}>
+                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 border-2 border-white ${step.color === 'brandYellow' ? 'bg-brandYellow' :
+                                    step.color === 'brandPurple' ? 'bg-brandPurple' :
+                                        'bg-brandGreen'
+                                }`}>
                                 <step.icon className="w-8 h-8 text-brandBlack" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4">{step.title}</h3>

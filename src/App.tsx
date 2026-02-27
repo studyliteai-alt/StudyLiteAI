@@ -1,9 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { MainLayout } from './components/MainLayout';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { LandingPage } from './pages/LandingPage';
 import { SignUp } from './pages/auth/SignUp';
 import { Login } from './pages/auth/Login';
@@ -13,9 +14,8 @@ import { Pricing } from './pages/Pricing';
 import { Checkout } from './pages/checkout/Checkout';
 import { PaymentSuccess } from './pages/checkout/PaymentSuccess';
 import { PaymentFailed } from './pages/checkout/PaymentFailed';
-import Dashboard from './pages/Dashboard';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { Dashboard } from './pages/Dashboard';
 
 function App() {
     return (
@@ -27,16 +27,21 @@ function App() {
                             <ScrollToTop />
                             <div className="min-h-screen bg-cream text-brandBlack font-sans selection:bg-brandPurple selection:text-white flex flex-col">
                                 <Routes>
-                                    <Route path="/dashboard" element={
-                                        <ProtectedRoute>
-                                            <Dashboard />
-                                        </ProtectedRoute>
-                                    } />
                                     {/* Auth Routes - No Navbar/Footer */}
                                     <Route path="/signup" element={<SignUp />} />
                                     <Route path="/login" element={<Login />} />
                                     <Route path="/forgot-password" element={<ForgotPassword />} />
                                     <Route path="/reset-password" element={<ResetPassword />} />
+
+                                    {/* Protected Dashboard - No Navbar/Footer */}
+                                    <Route
+                                        path="/dashboard"
+                                        element={
+                                            <ProtectedRoute>
+                                                <Dashboard />
+                                            </ProtectedRoute>
+                                        }
+                                    />
 
                                     {/* Main Layout Routes - With Navbar & Footer */}
                                     <Route element={<MainLayout />}>
@@ -49,7 +54,7 @@ function App() {
                                             <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
                                                 <h1 className="text-4xl font-black mb-4">404</h1>
                                                 <p className="text-brandBlack/60 mb-8 font-medium">This page doesn't exist.</p>
-                                                <a href="/" className="bg-brandBlack text-white px-8 py-3 rounded-full font-bold">Go Home</a>
+                                                <Link to="/" className="bg-brandBlack text-white px-8 py-3 rounded-full font-bold">Go Home</Link>
                                             </div>
                                         } />
                                     </Route>

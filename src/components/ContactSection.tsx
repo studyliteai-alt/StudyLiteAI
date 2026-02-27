@@ -10,7 +10,7 @@ export const ContactSection = () => {
         setStatus('loading');
 
         const formData = new FormData(e.currentTarget);
-        formData.append("access_key", "eb9cef46-c37d-40cc-85fe-f28fd9f45a63");
+        formData.append("access_key", import.meta.env.VITE_WEB3FORMS_KEY || "eb9cef46-c37d-40cc-85fe-f28fd9f45a63");
         formData.append("subject", "New Contact Inquiry - StudyLite AI");
         formData.append("from_name", "StudyLite AI Contact Form");
 
@@ -112,6 +112,7 @@ export const ContactSection = () => {
                                                 type="text"
                                                 name="name"
                                                 required
+                                                aria-label="Your Name"
                                                 placeholder="Your Name"
                                                 className="w-full bg-cream border-2 border-brandBlack/5 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-brandPurple transition-all font-bold placeholder:text-brandBlack/20"
                                             />
@@ -125,6 +126,7 @@ export const ContactSection = () => {
                                                 type="email"
                                                 name="email"
                                                 required
+                                                aria-label="Your Email"
                                                 placeholder="your@email.com"
                                                 className="w-full bg-cream border-2 border-brandBlack/5 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-brandPurple transition-all font-bold placeholder:text-brandBlack/20"
                                             />

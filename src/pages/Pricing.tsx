@@ -70,7 +70,7 @@ export const Pricing = () => {
                                 ))}
                             </ul>
 
-                            <Link to="/checkout">
+                            <Link to={plan.cta === 'Upgrade to Pro' ? '/checkout?plan=pro' : plan.cta === 'Contact Us' ? '/#contact' : '/signup'}>
                                 <MagneticButton className={`w-full py-4 rounded-2xl font-bold transition-all ${plan.btnColor}`}>
                                     {plan.cta}
                                 </MagneticButton>

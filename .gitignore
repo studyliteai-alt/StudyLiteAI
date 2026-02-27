@@ -1,34 +1,40 @@
 # Dependencies
-node_modules
-.pnp
-.pnp.js
+node_modules/
 
-# Testing
-coverage
+# Build output
+dist/
+dist-ssr/
+build/
 
-# Production
-dist
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
 
-# Misc
-.DS_Store
-*.pem
-
-# Log files
+# Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Local env files
-.env*.local
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript cache
+*.tsbuildinfo
 
 # Vercel
 .vercel
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# TypeScript
-*.tsbuildinfo

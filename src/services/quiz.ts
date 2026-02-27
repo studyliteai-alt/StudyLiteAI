@@ -1,4 +1,5 @@
 import { db } from "../lib/firebase";
+import { doc, updateDoc, increment } from "firebase/firestore";
 import {
     collection,
     addDoc,
@@ -9,7 +10,14 @@ import {
     serverTimestamp,
     DocumentData
 } from "firebase/firestore";
-import { QuizResult } from "../components/dashboard/types";
+export interface QuizResult {
+    id: string;
+    title: string;
+    score: number;
+    time: string;
+    status: 'completed' | 'in-progress' | 'failed';
+    category?: string;
+}
 
 const QUIZ_COLLECTION = "quizzes";
 
@@ -17,11 +25,19 @@ export const quizService = {
     async saveQuizResult(userId: string, result: Omit<QuizResult, 'id'>) {
         if (!db) return null;
         try {
+            const userRef = doc(db, "users", userId);
+
             const docRef = await addDoc(collection(db, QUIZ_COLLECTION), {
                 ...result,
                 userId,
                 createdAt: serverTimestamp(),
             });
+
+            await updateDoc(userRef, {
+                points: increment(25), // More points for quiz!
+                quizzesUsed: increment(1)
+            });
+
             return docRef.id;
         } catch (error: any) {
             if (error.code === 'unavailable' || error.message?.includes('offline')) {
@@ -49,8 +65,9 @@ export const quizService = {
                     title: data.title,
                     score: data.score,
                     time: data.time,
-                    status: data.status
-                } as unknown as QuizResult;
+                    status: data.status,
+                    category: data.category ?? '',
+                } as QuizResult;
             });
         } catch (error: any) {
             if (error.code === 'unavailable' || error.message?.includes('offline')) {

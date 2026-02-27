@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Users ───────────────────────────────────────────────────────────────
+    // A user can only read and update their own profile.
+    // Fields that change role or subscription require admin SDK (server-side only).
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   // Prevent client from modifying sensitive fields
+                   && !request.resource.data.keys().hasAny(['role', 'subscriptionStatus', 'points', 'streak', 'promptsUsed', 'quizzesUsed']);
+    }
+
+    // ─── User Settings ───────────────────────────────────────────────────────
+    match /userSettings/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ─── Study Sessions ──────────────────────────────────────────────────────
+    match /sessions/{docId} {
+      // Only the owner of the session can read it
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+      // On create, enforce that userId matches the authenticated user
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      // No updates or deletes allowed from client
+      allow update, delete: if false;
+    }
+
+    // ─── Quiz Results ────────────────────────────────────────────────────────
+    match /quizzes/{docId} {
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ─── Analytics / AI Insights ────────────────────────────────────────────
+    match /analytics/{docId} {
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ─── Leaderboard (public read, no write from client) ────────────────────
+    // The leaderboard reads from /users but we will project only safe fields.
+    // No separate collection needed — just restrict user reads above.
+
+    // ─── Deny everything else ───────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -44,15 +44,15 @@ export const FeaturesSection = () => {
     return (
         <Section id="features" className="bg-brandBlack py-32 md:py-10 overflow-hidden">
             <div className="max-w-7xl mx-auto px-8 md:px-12">
-                <div className="text-center mb-32">
+                <div className="text-center mb-20 md:mb-32">
                     <div className="inline-block px-4 py-1.5 rounded-full border-2 border-brandPurple bg-brandPurple/10 mb-6 backdrop-blur-sm">
                         <span className="text-xs font-black uppercase tracking-widest text-brandPurple">The Toolkit</span>
                     </div>
-                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase mb-8 tracking-tighter italic leading-[0.85] text-white">
-                        The Ultimate <br />
+                    <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase mb-8 tracking-tighter italic leading-[0.9] text-white">
+                        The Ultimate <br className="sm:hidden" />
                         <span className="text-brandPurple underline decoration-brandYellow underline-offset-8">Study Stack</span>
                     </h2>
-                    <p className="text-xl md:text-2xl font-bold leading-relaxed text-white/60 max-w-2xl mx-auto">
+                    <p className="text-lg md:text-2xl font-bold leading-relaxed text-white/60 max-w-2xl mx-auto">
                         A power-packed suite of AI tools designed to turn hours of reading into minutes of high-impact learning.
                     </p>
                 </div>
@@ -66,7 +66,7 @@ export const FeaturesSection = () => {
                                 className={`group relative p-10 rounded-[40px] border-4 border-brandBlack flex flex-col transition-all duration-500 hover:-translate-y-2 hover:translate-x-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] ${feature.color} overflow-hidden min-h-[400px]`}
                             >
                                 {/* Icon Background Decor */}
-                                <div className="absolute -top-4 -right-4 p-8 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+                                <div aria-hidden="true" className="absolute -top-4 -right-4 p-8 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
 
                                 <div className="relative z-10 h-full flex flex-col">
                                     <div className="mb-auto flex justify-between items-start">

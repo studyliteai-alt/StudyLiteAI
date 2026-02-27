@@ -10,12 +10,12 @@ export default {
                 sans: ['Outfit', 'sans-serif'],
             },
             colors: {
-                cream: '#FCF9F3',
-                brandPurple: '#A855F7',
-                brandYellow: '#FACC15',
-                brandGreen: '#22C55E',
-                brandPink: '#F472B6',
-                brandBlack: '#18181B',
+                cream: 'var(--cream)',
+                brandPurple: 'var(--brand-purple)',
+                brandYellow: 'var(--brand-yellow)',
+                brandGreen: 'var(--brand-green)',
+                brandPink: 'var(--brand-pink)',
+                brandBlack: 'var(--brand-black)',
             },
             animation: {
                 wiggle: 'highlight-wiggle 4s ease-in-out infinite',

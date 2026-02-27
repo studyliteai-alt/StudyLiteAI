@@ -1,6 +1,5 @@
 import { Hero } from '../components/Hero';
 import { Section } from '../components/Section';
-import { DashboardVisual } from '../components/DashboardVisual';
 import { FeaturesSection } from '../components/FeaturesSection';
 import { HowItWorks } from '../components/HowItWorks';
 import { ProblemSection } from '../components/ProblemSection';
@@ -18,10 +17,6 @@ export const LandingPage = () => {
         <main className="overflow-x-clip">
             <Hero />
 
-            {/* Main Dashboard Visual */}
-            <Section className="max-w-6xl mx-auto px-6 pb-40">
-                <DashboardVisual />
-            </Section>
 
             <ProblemSection />
 
