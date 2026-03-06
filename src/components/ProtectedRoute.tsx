@@ -1,9 +1,10 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const ProtectedRoute: React.FC = () => {
     const { user, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
@@ -14,7 +15,8 @@ export const ProtectedRoute: React.FC = () => {
     }
 
     if (!user) {
-        return <Navigate to="/login" replace />;
+        // Pass the current location so we can redirect back after login/signup
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     return <Outlet />;

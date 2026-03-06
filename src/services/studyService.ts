@@ -59,6 +59,49 @@ export const studyService = {
         }
     },
 
+    async getSettings() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return null;
+
+        const { data, error } = await supabase
+            .from('user_settings')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        if (!data) {
+            const { data: newData, error: insertError } = await supabase
+                .from('user_settings')
+                .insert({ user_id: user.id })
+                .select()
+                .single();
+            if (insertError) throw insertError;
+            return newData;
+        }
+
+        return data;
+    },
+
+    async updateRecentSearches(term: string) {
+        const settings = await this.getSettings();
+        if (!settings) return;
+
+        const searches = settings.recent_searches || [];
+        if (searches.includes(term)) return searches;
+
+        const updated = [term, ...searches.slice(0, 4)];
+
+        const { error } = await supabase
+            .from('user_settings')
+            .update({ recent_searches: updated })
+            .eq('user_id', settings.user_id);
+
+        if (error) throw error;
+        return updated;
+    },
+
     subscribeToProjects(callback: (payload: any) => void) {
         return supabase
             .channel('projects_realtime')

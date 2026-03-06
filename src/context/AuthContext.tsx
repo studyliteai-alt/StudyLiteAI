@@ -86,14 +86,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const signInWithGoogle = async () => {
+        const getSiteUrl = () => {
+            let url = import.meta.env.VITE_SITE_URL ?? window.location.origin;
+            // Make sure to include `https://` when not localhost
+            url = url.includes('http') ? url : `https://${url}`;
+            // Make sure to remove trailing slash
+            return url.replace(/\/$/, '');
+        };
+        const siteUrl = getSiteUrl();
+
         console.log('Initiating Google Auth Sign-in...');
-        console.log('Redirect URI target:', `${window.location.origin}/dashboard`);
+        console.log('Redirect URI target:', `${siteUrl}/dashboard`);
 
         try {
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/dashboard`,
+                    redirectTo: `${siteUrl}/dashboard`,
                     queryParams: {
                         access_type: 'offline',
                         prompt: 'select_account',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -10,7 +10,11 @@ export const LoginPage = () => {
     const [googleLoading, setGoogleLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const location = useLocation();
     const { signIn, signInWithGoogle } = useAuth();
+
+    // Get the return URL from location state, default to /dashboard
+    const from = location.state?.from?.pathname || '/dashboard';
 
     const handleGoogleLogin = async () => {
         setGoogleLoading(true);
@@ -42,7 +46,7 @@ export const LoginPage = () => {
             setError(error.message);
             setLoading(false);
         } else {
-            navigate('/dashboard');
+            navigate(from, { replace: true });
         }
     };
 

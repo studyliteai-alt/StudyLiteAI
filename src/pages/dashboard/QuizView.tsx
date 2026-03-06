@@ -9,10 +9,14 @@ import {
     XCircle,
     ChevronRight,
     BarChart3,
-    History as HistoryIcon
+    History as HistoryIcon,
+    Loader2,
+    Sparkles,
+    Share2
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
-import { quizService, studySessionService } from '../../services/quizService';
+import { quizService, studySessionService, QuizAttempt } from '../../services/quizService';
+import { aiService } from '../../services/aiService';
 
 interface Question {
     id: number;
@@ -30,6 +34,9 @@ export const QuizView = () => {
     const [score, setScore] = useState(0);
     const [timeLeft, setTimeLeft] = useState(30);
     const [isPaused] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+    const [result, setResult] = useState<QuizAttempt | null>(null);
 
     // Quiz Config
     const [questionCount, setQuestionCount] = useState(10);
@@ -66,23 +73,29 @@ export const QuizView = () => {
         setStep('setup');
     };
 
-    const startQuiz = () => {
-        // Generate mock questions based on count
-        // In a real app, this would call an AI service
-        const generated: Question[] = Array.from({ length: questionCount }).map((_, i) => ({
-            id: i + 1,
-            text: `Sample question ${i + 1} about ${topic}?`,
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctAnswer: Math.floor(Math.random() * 4)
-        }));
+    const startQuiz = async () => {
+        setIsGenerating(true);
+        try {
+            showToast('AI thinking...', `Generating your ${topic} quiz now.`, 'info');
+            const generated = await aiService.generateQuiz(topic, questionCount);
 
-        setQuestions(generated);
-        setStep('quiz');
-        setTimeLeft(timePerQuestion);
-        setScore(0);
-        setCurrentQuestion(0);
-        setSessionStartTime(Date.now());
-        showToast('Quiz Started', `Good luck with ${topic}!`, 'success');
+            if (!generated || generated.length === 0) {
+                throw new Error("No questions generated");
+            }
+
+            setQuestions(generated);
+            setStep('quiz');
+            setTimeLeft(timePerQuestion);
+            setScore(0);
+            setCurrentQuestion(0);
+            setSessionStartTime(Date.now());
+            showToast('Quiz Ready', `Good luck with ${topic}!`, 'success');
+        } catch (error) {
+            console.error("Quiz generation failed:", error);
+            showToast('Generation Failed', 'Einstein is taking a nap. Please try again.', 'error');
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     const handleAnswer = (index: number) => {
@@ -115,18 +128,38 @@ export const QuizView = () => {
             }));
 
         try {
-            await quizService.saveQuizAttempt({
+            const savedQuiz = await quizService.saveQuizAttempt({
                 topic,
                 score,
                 total_questions: finalQuestions.length,
                 time_spent: timeSpent,
                 wrong_answers: wrongAnswers
             });
+            setResult(savedQuiz);
             await studySessionService.logStudyTime(timeSpent);
             setStep('result');
         } catch (err) {
             showToast('Sync Error', 'Could not save result, but you finished!', 'info');
             setStep('result');
+        }
+    };
+
+    const handleShare = async () => {
+        if (!result?.id) {
+            showToast('Sharing Unavailable', 'This session was not saved to the vault.', 'error');
+            return;
+        }
+
+        setIsSharing(true);
+        const shareUrl = `${window.location.origin}/dashboard/quiz/share/${result.id}`;
+
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            showToast('Link Copied', 'Share this link with your friends!', 'success');
+        } catch (err) {
+            showToast('Error', 'Failed to copy link.', 'error');
+        } finally {
+            setTimeout(() => setIsSharing(false), 2000);
         }
     };
 
@@ -228,9 +261,20 @@ export const QuizView = () => {
 
                         <button
                             onClick={startQuiz}
-                            className="w-full bg-brandBlack text-white py-5 rounded-2xl font-black text-xl border-2 border-brandBlack shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all mt-4"
+                            disabled={isGenerating}
+                            className="w-full bg-brandBlack text-white py-5 rounded-2xl font-black text-xl border-2 border-brandBlack shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all mt-4 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
-                            START QUIZ
+                            {isGenerating ? (
+                                <>
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                    GENERATING...
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles className="w-6 h-6 text-brandYellow group-hover:animate-pulse" />
+                                    START QUIZ
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -300,13 +344,22 @@ export const QuizView = () => {
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 pt-8">
-                        <button
-                            onClick={() => setStep('review')}
-                            className="w-full bg-brandYellow text-brandBlack py-4 rounded-xl font-black text-lg border-2 border-brandBlack shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
-                        >
-                            Review Mistakes
-                            <HistoryIcon className="w-5 h-5" />
-                        </button>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={() => setStep('review')}
+                                className="bg-brandYellow text-brandBlack py-4 rounded-xl font-black text-lg border-2 border-brandBlack shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
+                            >
+                                Review Mistake
+                                <HistoryIcon className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={handleShare}
+                                className="bg-white text-brandBlack py-4 rounded-xl font-black text-lg border-2 border-brandBlack shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
+                            >
+                                {isSharing ? 'COPIED!' : 'Share Score'}
+                                <Share2 className={`w-5 h-5 ${isSharing ? 'text-brandPurple animate-pulse' : ''}`} />
+                            </button>
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 onClick={startQuiz}

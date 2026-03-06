@@ -47,6 +47,20 @@ export const quizService = {
         return data as QuizAttempt[];
     },
 
+    async getQuizById(id: string) {
+        const { data, error } = await supabase
+            .from('quizzes')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) {
+            console.error('Error fetching quiz by id:', error);
+            throw error;
+        }
+        return data as QuizAttempt;
+    },
+
     async getStats() {
         const { data: userData } = await supabase.auth.getUser();
         if (!userData.user) return { totalQuizzes: 0, avgScore: 0 };

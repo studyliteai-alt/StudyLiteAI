@@ -17,6 +17,7 @@ import { SettingsView } from './pages/dashboard/SettingsView';
 import { ChatView } from './pages/dashboard/ChatView';
 import { QuizView } from './pages/dashboard/QuizView';
 import { LeaderboardView } from './pages/dashboard/LeaderboardView';
+import { SharedQuizView } from './pages/dashboard/SharedQuizView';
 
 function App() {
     return (
@@ -43,6 +44,7 @@ function App() {
                                             <Route path="performance" element={<PerformanceView />} />
                                             <Route path="history" element={<HistoryView />} />
                                             <Route path="quiz" element={<QuizView />} />
+                                            <Route path="quiz/share/:quizId" element={<SharedQuizView />} />
                                             <Route path="leaderboard" element={<LeaderboardView />} />
                                             <Route path="settings" element={<SettingsView />} />
                                         </Route>

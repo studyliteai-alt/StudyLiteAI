@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, Loader2, ArrowRight, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,6 +12,10 @@ export const SignUpPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const { signUp, signInWithGoogle } = useAuth();
+    const location = useLocation();
+
+    // Preserve the redirect state
+    const from = location.state?.from;
 
     const handleGoogleSignUp = async () => {
         setGoogleLoading(true);
@@ -201,7 +205,7 @@ export const SignUpPage = () => {
 
                     <p className="mt-8 text-center font-bold text-brandBlack/60">
                         Already have an account?{' '}
-                        <Link to="/login" className="text-brandPurple hover:underline">
+                        <Link to="/login" state={{ from }} className="text-brandPurple hover:underline">
                             Log in
                         </Link>
                     </p>

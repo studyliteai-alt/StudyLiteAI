@@ -17,14 +17,20 @@ export const HistoryView = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [vaultItems, setVaultItems] = useState<any[]>([]);
+    const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const [projects, quizzes] = await Promise.all([
+                const [projects, quizzes, settings] = await Promise.all([
                     studyService.getProjects(),
-                    quizService.getQuizHistory()
+                    quizService.getQuizHistory(),
+                    studyService.getSettings()
                 ]);
+
+                if (settings?.recent_searches) {
+                    setRecentSearches(settings.recent_searches);
+                }
 
                 // Merge and sort by date
                 const items = [
@@ -61,6 +67,18 @@ export const HistoryView = () => {
         fetchHistory();
     }, []);
 
+    const handleSearch = async (term: string) => {
+        setSearchTerm(term);
+        if (term.trim()) {
+            try {
+                const updated = await studyService.updateRecentSearches(term);
+                if (updated) setRecentSearches(updated);
+            } catch (err) {
+                console.error('Search Save Error:', err);
+            }
+        }
+    };
+
     const filteredItems = vaultItems.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.type.toLowerCase().includes(searchTerm.toLowerCase())
@@ -81,15 +99,33 @@ export const HistoryView = () => {
                             placeholder="Search your archive..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            onBlur={() => handleSearch(searchTerm)}
                             className="w-full bg-white border border-gray-100 rounded-2xl py-3.5 pl-11 pr-4 font-bold text-sm focus:outline-none focus:ring-4 focus:ring-black/5 transition-all shadow-sm"
                         />
                     </div>
                 </div>
             </div>
 
+            {recentSearches.length > 0 && (
+                <div className="flex items-center gap-4 animate-in fade-in slide-in-from-left-4 duration-500">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-brandBlack/30">Recent Searches:</p>
+                    <div className="flex gap-2">
+                        {recentSearches.map((search, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSearchTerm(search)}
+                                className="px-4 py-1.5 bg-white border border-gray-100 rounded-full text-[9px] font-bold text-brandBlack/60 hover:border-brandPurple hover:text-brandPurple transition-all"
+                            >
+                                {search}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 gap-4">
                 {loading ? (
-                    <div className="text-center py-20 italic text-gray-400 animate-pulse">Decrypting archives...</div>
+                    <div className="text-center py-20 italic text-gray-400 animate-pulse font-bold">Accessing secure archives...</div>
                 ) : filteredItems.length > 0 ? (
                     filteredItems.map((item) => (
                         <div key={item.id} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm group hover:shadow-xl hover:shadow-black/5 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-8">
