@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, LayoutDashboard } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Navbar = () => {
-    const { user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
+    const { user, signOut } = useAuth();
+    const navigate = useNavigate();
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -34,16 +35,27 @@ export const Navbar = () => {
                 {/* Desktop Actions */}
                 <div className="hidden lg:flex items-center gap-6">
                     {user ? (
-                        <Link
-                            to="/dashboard"
-                            className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95 flex items-center gap-2"
-                        >
-                            <LayoutDashboard size={16} />
-                            Go to Dashboard
-                        </Link>
+                        <div className="flex items-center gap-4">
+                            <Link to="/dashboard" className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95">
+                                Go to Dashboard
+                            </Link>
+                            <button
+                                onClick={async () => {
+                                    await signOut();
+                                    navigate('/');
+                                }}
+                                className="flex items-center gap-2 p-2 text-brandBlack hover:text-red-500 transition-colors font-bold text-sm"
+                                title="Log Out"
+                            >
+                                <LogOut className="w-5 h-5" />
+                                <span className="hidden xl:inline">Log Out</span>
+                            </button>
+                        </div>
                     ) : (
                         <>
-                            <Link to="/login" className="text-sm font-medium hover:text-brandPurple transition-colors">Log in</Link>
+                            <Link to="/login" className="text-sm font-bold hover:text-brandPurple transition-colors">
+                                Log In
+                            </Link>
                             <Link to="/signup" className="bg-brandBlack text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-brandPurple transition-all transform active:scale-95">
                                 Get Started
                             </Link>
@@ -81,17 +93,31 @@ export const Navbar = () => {
                     </div>
                     <div className="pt-6 border-t border-brandBlack/5 flex flex-col gap-4">
                         {user ? (
-                            <Link
-                                to="/dashboard"
-                                onClick={toggleMenu}
-                                className="bg-brandBlack text-white px-6 py-4 rounded-xl text-center font-bold hover:bg-brandPurple transition-all flex items-center justify-center gap-2"
-                            >
-                                <LayoutDashboard size={20} />
-                                Go to Dashboard
-                            </Link>
+                            <>
+                                <Link
+                                    to="/dashboard"
+                                    onClick={toggleMenu}
+                                    className="bg-brandPurple text-white px-6 py-4 rounded-xl text-center font-bold"
+                                >
+                                    Go to Dashboard
+                                </Link>
+                                <button
+                                    onClick={async () => {
+                                        await signOut();
+                                        toggleMenu();
+                                        navigate('/');
+                                    }}
+                                    className="bg-cream text-brandBlack border-2 border-brandBlack px-6 py-4 rounded-xl text-center font-bold flex items-center justify-center gap-2"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    Log Out
+                                </button>
+                            </>
                         ) : (
                             <>
-                                <Link to="/login" onClick={toggleMenu} className="text-lg font-bold hover:text-brandPurple transition-colors">Log in</Link>
+                                <Link to="/login" onClick={toggleMenu} className="px-6 py-4 rounded-xl text-center font-bold border-2 border-brandBlack">
+                                    Log In
+                                </Link>
                                 <Link to="/signup" onClick={toggleMenu} className="bg-brandBlack text-white px-6 py-4 rounded-xl text-center font-bold hover:bg-brandPurple transition-all">
                                     Get Started
                                 </Link>

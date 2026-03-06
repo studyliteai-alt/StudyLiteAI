@@ -1,7 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { Section } from './Section';
 import { Sparkles, Target, Brain, Zap, History } from 'lucide-react';
+import { MagneticButton } from './MagneticButton';
+import { useAuth } from '../context/AuthContext';
 
 const features = [
+    // ... features ...
     {
         icon: Sparkles,
         title: "AI Summaries",
@@ -40,15 +44,25 @@ const features = [
 ];
 
 export const FeaturesSection = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCtaClick = () => {
+        if (user) {
+            navigate('/dashboard');
+        } else {
+            navigate('/signup');
+        }
+    };
 
     return (
-        <Section id="features" className="bg-brandBlack py-32 md:py-10 overflow-hidden">
-            <div className="max-w-7xl mx-auto px-8 md:px-12">
-                <div className="text-center mb-20 md:mb-32">
+        <Section id="features" className="bg-brandBlack py-32 md:py-20 overflow-hidden text-white">
+            <div className="max-w-7xl mx-auto px-8 md:px-12 text-center">
+                <div className="mb-20 md:mb-32">
                     <div className="inline-block px-4 py-1.5 rounded-full border-2 border-brandPurple bg-brandPurple/10 mb-6 backdrop-blur-sm">
                         <span className="text-xs font-black uppercase tracking-widest text-brandPurple">The Toolkit</span>
                     </div>
-                    <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase mb-8 tracking-tighter italic leading-[0.9] text-white">
+                    <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase mb-8 tracking-tighter italic leading-[0.9]">
                         The Ultimate <br className="sm:hidden" />
                         <span className="text-brandPurple underline decoration-brandYellow underline-offset-8">Study Stack</span>
                     </h2>
@@ -58,7 +72,7 @@ export const FeaturesSection = () => {
                 </div>
 
                 {/* Uniform Grid Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left mb-20">
                     {features.map((feature, i) => {
                         return (
                             <div
@@ -92,6 +106,13 @@ export const FeaturesSection = () => {
                         );
                     })}
                 </div>
+
+                <MagneticButton
+                    onClick={handleCtaClick}
+                    className="bg-brandPurple text-white px-12 py-5 rounded-full font-black text-xl hover:bg-brandYellow hover:text-brandBlack hover:scale-110 transition-all border-4 border-brandBlack shadow-[10px_10px_0px_0px_rgba(255,255,255,0.1)]"
+                >
+                    {user ? 'Return to Dashboard' : 'Start Your Journey'}
+                </MagneticButton>
             </div>
         </Section>
     );

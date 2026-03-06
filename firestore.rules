@@ -9,8 +9,9 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if request.auth != null
                    && request.auth.uid == userId
-                   // Prevent client from modifying sensitive fields
-                   && !request.resource.data.keys().hasAny(['role', 'subscriptionStatus', 'points', 'streak', 'promptsUsed', 'quizzesUsed']);
+                   // Allow client to update standard profile and progression fields.
+                   // Sensitive fields like 'role' and 'subscriptionStatus' should still be handled via Admin SDK/Functions.
+                   && !request.resource.data.keys().hasAny(['role', 'subscriptionStatus']);
     }
 
     // ─── User Settings ───────────────────────────────────────────────────────

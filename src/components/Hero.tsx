@@ -1,9 +1,19 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MagneticButton } from './MagneticButton';
 import { useAuth } from '../context/AuthContext';
 
 export const Hero = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCtaClick = () => {
+        if (user) {
+            navigate('/dashboard');
+        } else {
+            navigate('/signup');
+        }
+    };
+
     return (
         <section className="relative pt-20 pb-32 bg-cream overflow-hidden">
             {/* Decorative SVG Illustrations */}
@@ -54,19 +64,12 @@ export const Hero = () => {
                     Study smarter with AI that simplifies your notes, highlights key points, and creates quizzes — even on slow internet.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    {user ? (
-                        <Link to="/signup">
-                            <MagneticButton className="bg-brandBlack text-white px-8 py-4 rounded-full font-bold hover:bg-brandPurple transition-all transform hover:-translate-y-1">
-                                Start Studying Free
-                            </MagneticButton>
-                        </Link>
-                    ) : (
-                        <Link to="/signup">
-                            <MagneticButton className="bg-brandBlack text-white px-8 py-4 rounded-full font-bold hover:bg-brandPurple transition-all transform hover:-translate-y-1">
-                                Start Studying Free
-                            </MagneticButton>
-                        </Link>
-                    )}
+                    <MagneticButton
+                        onClick={handleCtaClick}
+                        className="bg-brandBlack text-white px-8 py-4 rounded-full font-bold hover:bg-brandPurple transition-all transform hover:-translate-y-1"
+                    >
+                        {user ? 'Go to Dashboard' : 'Start Studying Free'}
+                    </MagneticButton>
                     <a href="#how-it-works">
                         <MagneticButton className="bg-white border-2 border-brandBlack px-8 py-4 rounded-full font-bold hover:bg-brandBlack hover:text-white transition-all transform hover:-translate-y-1">
                             See How It Works

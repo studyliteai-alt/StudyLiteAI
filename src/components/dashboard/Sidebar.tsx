@@ -1,208 +1,155 @@
-import { LogOut, LayoutGrid, MessageSquare, Trophy, Settings, X, Zap } from 'lucide-react';
-import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import {
+    LayoutDashboard,
+    MessageSquare,
+    TrendingUp,
+    History,
+    Settings,
+    LogOut,
+    Zap,
+    Trophy,
+    Gamepad2,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import type { DashboardTab } from '../../pages/Dashboard';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../../context/ToastContext';
 import { Logo } from '../Logo';
 
 interface SidebarProps {
-    activeTab: DashboardTab;
-    onTabChange: (tab: DashboardTab) => void;
-    isOpen?: boolean;
-    onClose?: () => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-const NAV_ITEMS: { id: DashboardTab; icon: React.ElementType; label: string }[] = [
-    { id: 'study', icon: MessageSquare, label: 'AI Tutor' },
-    { id: 'workspace', icon: LayoutGrid, label: 'Workspace' },
-    { id: 'leaderboard', icon: Trophy, label: 'Leaderboard' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
-];
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+    const location = useLocation();
+    const { user, signOut, uploadAvatar } = useAuth();
+    const { showToast } = useToast();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
 
-export const Sidebar = ({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) => {
-    const { logout, profile } = useAuth();
+    const navItems = [
+        { name: 'Study Vault', path: '/dashboard', icon: LayoutDashboard },
+        { name: 'AI Tutor', path: '/dashboard/chat', icon: MessageSquare },
+        { name: 'Quiz Center', path: '/dashboard/quiz', icon: Gamepad2 },
+        { name: 'Leaderboard', path: '/dashboard/leaderboard', icon: Trophy },
+        { name: 'History', path: '/dashboard/history', icon: History },
+        { name: 'Progress', path: '/dashboard/performance', icon: TrendingUp },
+        { name: 'Settings', path: '/dashboard/settings', icon: Settings },
+    ];
 
-    const handleTabChange = (tab: DashboardTab) => {
-        onTabChange(tab);
-        if (onClose) onClose();
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        showToast('Uploading...', 'Setting your new profile picture', 'info');
+
+        const { error } = await uploadAvatar(file);
+
+        if (error) {
+            showToast('Upload Failed', error.message || 'Something went wrong', 'error');
+        } else {
+            showToast('Success!', 'Profile picture updated.', 'success');
+        }
+        setUploading(false);
     };
 
     return (
         <>
-            {/* ── Desktop Sidebar ──────────────────────────────── */}
-            <aside
-                aria-label="Main navigation"
-                className="hidden md:flex w-60 h-screen flex-col py-8
-                           bg-[var(--sidebar-bg)] text-[var(--text-primary)] select-none shrink-0 relative z-50 border-r border-[var(--border)] shadow-sm"
-            >
-                {/* ── Brand Logo */}
-                <div className="px-5 mb-8 relative">
-                    <div className="flex items-center gap-2.5 group cursor-default">
-                        <Logo size={28} className="text-[var(--accent)]" />
-                        <div className="flex flex-col">
-                            <span className="text-lg font-bold tracking-tight leading-none text-[var(--text-primary)]">StudyLite</span>
-                            <span className="text-[9px] font-bold text-[var(--accent)] uppercase tracking-widest mt-0.5 opacity-80">Intelligence</span>
+            {/* Mobile Backdrop */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 lg:hidden"
+                    onClick={onClose}
+                />
+            )}
+
+            <aside className={`
+                fixed inset-y-0 left-0 bg-[#1A1A1A] flex flex-col items-center py-6 z-50 transition-all duration-500 ease-in-out
+                lg:relative lg:translate-x-0 w-[72px]
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                {/* Logo Section */}
+                <div className="mb-8">
+                    <Link to="/dashboard" className="group">
+                        <div className="w-10 h-10 bg-white rounded-[14px] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Logo size={24} />
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
-                {/* ── Navigation Links */}
-                <nav className="flex-1 px-4 space-y-1" aria-label="Dashboard sections">
-                    {NAV_ITEMS.map(({ id, icon: Icon, label }) => {
-                        const active = activeTab === id;
+                {/* Primary Nav */}
+                <nav className="flex-1 flex flex-col gap-6">
+                    {navItems.map((item) => {
+                        const isActive = location.pathname === item.path;
                         return (
-                            <button
-                                key={id}
-                                onClick={() => onTabChange(id)}
-                                aria-current={active ? 'page' : undefined}
-                                className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-lg transition-all duration-200 group relative
-                                    ${active
-                                        ? 'bg-[var(--accent-soft)] text-[var(--accent)] font-semibold'
-                                        : 'text-[var(--text-secondary)] hover:bg-slate-50 hover:text-[var(--text-primary)]'}`}
+                            <Link
+                                key={item.path}
+                                to={item.path}
+                                onClick={() => onClose()}
+                                className={`
+                                    w-10 h-10 flex items-center justify-center rounded-[14px] transition-all relative group
+                                    ${isActive
+                                        ? 'bg-[#F8D448] text-black shadow-[0_3px_0_0_#9A7F1A]'
+                                        : 'text-white/40 hover:text-white hover:bg-white/10'
+                                    }
+                                `}
                             >
-                                <Icon
-                                    size={16}
-                                    strokeWidth={active ? 2.5 : 2}
-                                    className="transition-colors duration-200"
-                                />
-                                <span className="text-[13px] tracking-tight">
-                                    {label}
-                                </span>
-                                {active && (
-                                    <div className="absolute left-0 w-0.5 h-4 bg-[var(--accent)] rounded-r-full" />
-                                )}
-                            </button>
+                                <item.icon size={20} className="relative z-10" />
+
+                                {/* Tooltip */}
+                                <div className="absolute left-14 px-2.5 py-1.5 bg-black text-white text-[9px] font-bold uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                                    {item.name}
+                                </div>
+                            </Link>
                         );
                     })}
                 </nav>
 
-                {/* ── Upgrade CTA (Only for non-pro) */}
-                {profile?.subscriptionStatus !== 'pro' && (
-                    <div className="px-3 mb-5">
-                        <motion.div
-                            whileHover={{ scale: 1.01 }}
-                            className="relative p-4 rounded-xl overflow-hidden group cursor-default"
-                        >
-                            {/* Premium Background Layer */}
-                            <div className="absolute inset-0 bg-[#0F172A] border border-white/5" />
-
-                            {/* Animated Gradient Glow */}
-                            <motion.div
-                                animate={{
-                                    opacity: [0.2, 0.4, 0.2],
-                                    scale: [1, 1.1, 1]
-                                }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                className="absolute -top-12 -right-12 w-28 h-28 bg-[var(--accent)] blur-[35px] rounded-full pointer-events-none"
-                            />
-
-                            <div className="relative z-10 space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-7 h-7 rounded-lg bg-[var(--accent)] flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                                        <Zap size={14} className="text-white" fill="currentColor" />
-                                    </div>
-                                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90">Premium</span>
-                                </div>
-
-                                <div className="space-y-0.5">
-                                    <h4 className="text-[13px] font-bold leading-tight text-white tracking-tight">Expand Your Mind</h4>
-                                    <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                                        Unlock unlimited AI tutorship and real-time analytics.
-                                    </p>
-                                </div>
-
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => window.location.href = '/checkout?plan=pro'}
-                                    className="w-full py-2 bg-white text-[#0F172A] text-[10px] font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-lg shadow-black/20"
-                                >
-                                    Upgrade to Pro
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-
-                {/* ── Bottom: Logout */}
-                <div className="mt-auto px-4 pt-6 border-t border-[var(--border)]">
+                {/* Bottom Actions */}
+                <div className="mt-auto flex flex-col gap-6 pt-6 border-t border-white/5 w-full items-center">
                     <button
-                        onClick={() => logout()}
-                        className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all group"
+                        onClick={() => signOut()}
+                        className="w-10 h-10 flex items-center justify-center rounded-[14px] text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all group relative"
                     >
-                        <LogOut size={16} />
-                        <span className="text-[13px] font-medium tracking-tight">Sign out</span>
+                        <LogOut size={20} />
+                        <div className="absolute left-14 px-2.5 py-1.5 bg-black text-white text-[9px] font-bold uppercase tracking-widest rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                            Sign Out
+                        </div>
                     </button>
+
+                    <div
+                        onClick={handleAvatarClick}
+                        className={`w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md cursor-pointer hover:scale-110 transition-transform bg-gradient-to-br from-[#F8D448] to-[#C7D2FE] p-0.5 relative ${uploading ? 'animate-pulse' : ''}`}
+                    >
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
+                        <div className="w-full h-full rounded-full bg-white overflow-hidden flex items-center justify-center">
+                            {user?.user_metadata?.avatar_url ? (
+                                <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-[10px] font-black text-black">
+                                    {(user?.user_metadata?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                                </span>
+                            )}
+                        </div>
+                        {user?.user_metadata?.is_premium && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#F8D448] rounded-full flex items-center justify-center border-2 border-[#1A1A1A] shadow-sm">
+                                <Zap size={8} className="text-[#1A1A1A] fill-current" />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </aside>
-
-            {/* ── Mobile Side Drawer ──────────────────────────────── */}
-            <AnimatePresence>
-                {isOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="md:hidden fixed inset-0 bg-slate-900/20 z-[70] backdrop-blur-sm"
-                            onClick={onClose}
-                        />
-                        <motion.nav
-                            initial={{ x: -280 }}
-                            animate={{ x: 0 }}
-                            exit={{ x: -280 }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="md:hidden fixed top-0 left-0 bottom-0 w-[280px] z-[80] bg-[var(--surface)] flex flex-col py-8 border-r border-[var(--border)] shadow-2xl"
-                        >
-                            <div className="px-6 mb-8 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <Logo size={32} className="text-[var(--accent)]" />
-                                    <div className="flex flex-col">
-                                        <span className="text-xl font-bold tracking-tight leading-none text-[var(--text-primary)]">StudyLite</span>
-                                        <span className="text-[10px] font-bold text-[var(--accent)] uppercase tracking-widest mt-0.5 opacity-80">Intelligence</span>
-                                    </div>
-                                </div>
-                                <button onClick={onClose} className="text-slate-400">
-                                    <X size={20} />
-                                </button>
-                            </div>
-
-                            <ul className="flex-1 px-3 space-y-1">
-                                {NAV_ITEMS.map(({ id, icon: Icon, label }) => {
-                                    const active = activeTab === id;
-                                    return (
-                                        <li key={id}>
-                                            <button
-                                                onClick={() => handleTabChange(id)}
-                                                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 relative
-                                                    ${active
-                                                        ? 'bg-[var(--accent-soft)] text-[var(--accent)]'
-                                                        : 'text-[var(--text-secondary)] hover:bg-slate-50'}`}
-                                            >
-                                                <Icon size={18} strokeWidth={active ? 2.5 : 2} />
-                                                {label}
-                                                {active && (
-                                                    <div className="absolute left-0 w-1 h-5 bg-[var(--accent)] rounded-r-full" />
-                                                )}
-                                            </button>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-
-                            <div className="px-3 pt-6 border-t border-[var(--border)]">
-                                <button
-                                    onClick={() => logout()}
-                                    className="w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-sm font-semibold text-rose-500 hover:bg-rose-50 transition-all"
-                                >
-                                    <LogOut size={18} />
-                                    Sign out
-                                </button>
-                            </div>
-                        </motion.nav>
-                    </>
-                )}
-            </AnimatePresence>
         </>
     );
 };
-

@@ -1,9 +1,21 @@
+import { useNavigate } from 'react-router-dom';
 import { Section } from './Section';
 import { Check } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export const PricingSection = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCtaClick = () => {
+        if (user) {
+            navigate('/dashboard/settings');
+        } else {
+            navigate('/signup');
+        }
+    };
+
     const plans = [
         {
             id: 'free',
@@ -41,7 +53,7 @@ export const PricingSection = () => {
     ];
 
     return (
-        <Section id="pricing" className="bg-cream py-32 px-6">
+        <Section id="pricing" className="bg-cream py-32 px-6 text-brandBlack">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-20">
                     <span className="text-brandPurple font-bold uppercase tracking-widest text-xs">Pricing Plans</span>
@@ -77,11 +89,12 @@ export const PricingSection = () => {
                                 ))}
                             </ul>
 
-                            <Link to={`/checkout?plan=${plan.id}`} className="mt-auto">
-                                <MagneticButton className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest border-2 border-brandBlack transition-all ${plan.btnColor}`}>
-                                    {plan.cta}
-                                </MagneticButton>
-                            </Link>
+                            <MagneticButton
+                                onClick={handleCtaClick}
+                                className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest border-2 border-brandBlack transition-all ${plan.btnColor}`}
+                            >
+                                {user ? 'Go to Settings' : plan.cta}
+                            </MagneticButton>
                         </div>
                     ))}
                 </div>

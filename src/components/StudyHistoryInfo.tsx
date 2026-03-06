@@ -1,8 +1,21 @@
 import { History, Brain, Archive } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Section } from './Section';
+import { MagneticButton } from './MagneticButton';
+import { useAuth } from '../context/AuthContext';
 
 export const StudyHistoryInfo = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCtaClick = () => {
+        if (user) {
+            navigate('/dashboard/history');
+        } else {
+            navigate('/signup');
+        }
+    };
+
     return (
         <Section className="py-32 bg-cream text-brandBlack overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
@@ -20,7 +33,8 @@ export const StudyHistoryInfo = () => {
                             Every summary, every quiz, and every key concept is archived, indexed, and ready for your next exam.
                         </p>
 
-                        <div className="space-y-8">
+                        <div className="space-y-8 mb-12">
+                            {/* ... items ... */}
                             {[
                                 {
                                     title: "Never lose a thought",
@@ -44,6 +58,13 @@ export const StudyHistoryInfo = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <MagneticButton
+                            onClick={handleCtaClick}
+                            className="bg-brandBlack text-white px-10 py-4 rounded-full font-bold hover:bg-brandPurple transition-all shadow-[6px_6px_0px_0px_rgba(168,85,247,0.2)]"
+                        >
+                            {user ? 'View Your History' : 'Start Your Vault'}
+                        </MagneticButton>
                     </div>
 
                     <div className="relative">
@@ -58,7 +79,7 @@ export const StudyHistoryInfo = () => {
                                     { name: "Organic Chemistry 101", date: "1 hour ago", score: "94%" },
                                     { name: "Economic History", date: "Yesterday", score: "72%" }
                                 ].map((item, i) => (
-                                    <Link to="/history" key={i} className="flex items-center justify-between p-4 bg-cream/50 rounded-2xl border-2 border-brandBlack/5 hover:border-brandPurple/20 transition-all cursor-pointer">
+                                    <div key={i} className="flex items-center justify-between p-4 bg-cream/50 rounded-2xl border-2 border-brandBlack/5 hover:border-brandPurple/20 transition-all">
                                         <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 bg-brandPurple/10 rounded-full flex items-center justify-center">
                                                 <History size={18} className="text-brandPurple" />
@@ -72,7 +93,7 @@ export const StudyHistoryInfo = () => {
                                             <p className="text-xs font-bold text-brandBlack/40">SC</p>
                                             <p className="font-bold text-brandPurple">{item.score}</p>
                                         </div>
-                                    </Link>
+                                    </div>
                                 ))}
                             </div>
                         </div>

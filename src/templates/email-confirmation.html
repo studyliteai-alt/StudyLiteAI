@@ -1,0 +1,50 @@
+<div
+  style="margin: 0; padding: 40px 20px; text-align: center; background-color: #FDFBF7; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #18181B; -webkit-font-smoothing: antialiased;">
+  <div
+    style="max-width: 500px; margin: 0 auto; background-color: #FFFFFF; border: 4px solid #18181B; padding: 48px 40px; border-radius: 32px; box-shadow: 12px 12px 0px 0px #18181B;">
+
+    <div
+      style="margin-bottom: 32px; display: inline-block; background-color: #A855F7; padding: 16px; border-radius: 24px; border: 3px solid #18181B; box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.2);">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="30" fill="#FACC15" />
+        <path d="M30 60C30 60 40 50 50 50C60 50 70 60 70 60" stroke="#18181B" stroke-width="8" stroke-linecap="round" />
+      </svg>
+    </div>
+
+    <div>
+      <span
+        style="display: inline-block; background-color: #FACC15; color: #18181B; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 16px; border-radius: 99px; border: 2px solid #18181B; margin-bottom: 16px;">Action
+        Required</span>
+    </div>
+
+    <h1
+      style="font-size: 36px; font-weight: 900; font-style: italic; line-height: 1.1; margin: 0 0 24px 0; text-transform: uppercase; letter-spacing: -0.05em;">
+      Welcome to StudyLite.</h1>
+
+    <p style="font-size: 16px; line-height: 1.6; color: rgba(24, 24, 27, 0.7); margin: 0 0 40px 0; font-weight: 700;">
+      Your AI-powered study journey starts now. We need to verify this email address to unlock your personal workspace
+      and start learning smarter.</p>
+
+    <a href="{{ .ConfirmationURL }}"
+      style="display: inline-block; background-color: #18181B; color: #FFFFFF; text-decoration: none; padding: 20px 48px; border-radius: 16px; font-size: 20px; font-weight: 900; text-transform: uppercase; border: 3px solid #18181B; box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.2);">Verify
+      Email</a>
+
+    <div style="height: 4px; background-color: #18181B; margin: 48px 0; border-radius: 2px; opacity: 0.1;"></div>
+
+    <div
+      style="background-color: rgba(168, 85, 247, 0.05); border: 2px solid #18181B; padding: 24px; border-radius: 16px;">
+      <div
+        style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; color: #18181B;">
+        Button not working?</div>
+      <div style="font-size: 14px; color: #A855F7; word-break: break-all; font-weight: 700; line-height: 1.4;">
+        Copy this link: <br /> {{ .ConfirmationURL }}
+      </div>
+    </div>
+  </div>
+
+  <div
+    style="margin-top: 48px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(24, 24, 27, 0.4);">
+    &copy; 2026 StudyLite.ai<br>
+    Learn faster. Study smarter.
+  </div>
+</div>

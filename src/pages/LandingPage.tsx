@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { Section } from '../components/Section';
 import { FeaturesSection } from '../components/FeaturesSection';
@@ -9,10 +10,21 @@ import { TeamSection } from '../components/TeamSection';
 import { PricingSection } from '../components/PricingSection';
 import { AboutSection } from '../components/AboutSection';
 import { ContactSection } from '../components/ContactSection';
-import { Link } from 'react-router-dom';
 import { MagneticButton } from '../components/MagneticButton';
+import { useAuth } from '../context/AuthContext';
 
 export const LandingPage = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleCtaClick = () => {
+        if (user) {
+            navigate('/dashboard');
+        } else {
+            navigate('/signup');
+        }
+    };
+
     return (
         <main className="overflow-x-clip">
             <Hero />
@@ -45,11 +57,12 @@ export const LandingPage = () => {
                     <p className="text-lg md:text-xl text-brandBlack/60 mb-10 font-bold max-w-2xl mx-auto">
                         Join 250,000+ students mastering their subjects faster than ever.
                     </p>
-                    <Link to="/signup">
-                        <MagneticButton className="bg-brandBlack text-white px-12 py-5 rounded-full font-bold text-xl hover:bg-brandPurple transition-all transform hover:scale-110 shadow-xl">
-                            Create Free Account
-                        </MagneticButton>
-                    </Link>
+                    <MagneticButton
+                        onClick={handleCtaClick}
+                        className="bg-brandBlack text-white px-12 py-5 rounded-full font-bold text-xl hover:bg-brandPurple transition-all transform hover:scale-110 shadow-xl"
+                    >
+                        {user ? 'Back to Dashboard' : 'Create Free Account'}
+                    </MagneticButton>
                 </div>
             </Section>
         </main>
