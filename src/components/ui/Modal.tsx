@@ -4,7 +4,6 @@ import { X } from 'lucide-react';
 import { Card } from './Card.tsx';
 import { Button } from './Button.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
-import { cn } from '../../utils/cn.ts';
 
 interface ModalProps {
   isOpen: boolean;

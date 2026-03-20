@@ -1,6 +1,6 @@
 import React from 'react';
-import { Sidebar } from '../components/layout/Sidebar.tsx';
-import { TopBar } from '../components/layout/TopBar.tsx';
+import { Sidebar } from './dashboard/Sidebar.tsx';
+import { TopBar } from './dashboard/TopBar.tsx';
 import { Card } from '../components/ui/Card.tsx';
 import { Button } from '../components/ui/Button.tsx';
 import { Check } from 'lucide-react';

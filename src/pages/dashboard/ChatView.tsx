@@ -61,7 +61,7 @@ const ChatView: React.FC = () => {
                     <div className="grow overflow-y-auto scrollbar-hide">
                         <div className="max-w-6xl mx-auto w-full px-4 py-6 md:px-10 md:py-10 space-y-8">
                             <AnimatePresence initial={false}>
-                                {messages.map((msg, index) => (
+                                {messages.map((msg) => (
                                     <motion.div
                                         key={msg.id}
                                         initial={{ opacity: 0, y: 15 }}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, type Variants, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, FileText, Brain, Edit3, Image as ImageIcon, Users, BookOpen, Clock, Heart, Star, Sparkles, CheckCircle, ChevronUp } from 'lucide-react';
+import { ArrowRight, FileText, Brain, Edit3, Image as ImageIcon, Users, Clock, Heart, Star, Sparkles, CheckCircle, ChevronUp } from 'lucide-react';
 import logo from '../assets/logo.svg';
 
 const Landing: React.FC = () => {

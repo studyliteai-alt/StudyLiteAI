@@ -17,7 +17,7 @@ export interface AISessionResponse {
 }
 
 export const aiService = {
-  async processNotes(notes: string): Promise<AISessionResponse> {
+  async processNotes(_notes: string): Promise<AISessionResponse> {
     // Simulating API call delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     
