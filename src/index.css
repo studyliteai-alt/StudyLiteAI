@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6366f1; /* Indigo 500 */
+  --color-primary-light: #818cf8;
+  --color-secondary: #facc15;
+  --color-accent: #f43f5e;
+  --color-off-white: #fafafa;
+  --color-black: #0f172a; /* Slate 900 */
+  --color-glass: rgba(255, 255, 255, 0.85);
+  --color-glass-dark: rgba(15, 23, 42, 0.7);
+  
+  --font-space: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+}
+
+@media (min-width: 1024px) {
+  .neo-dashboard-layout {
+    zoom: 0.75;
+    width: 133.33vw;
+    height: 133.33vh;
+  }
+}
+
+@layer base {
+  :root {
+    --primary: 238 81% 67%;
+    --secondary: 48 96% 53%;
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    
+    --shadow-premium: 0 4px 24px -4px rgba(0,0,0,0.05);
+    --shadow-hover: 0 12px 32px -8px rgba(0,0,0,0.08);
+  }
+
+  body {
+    background-color: var(--color-off-white);
+    color: var(--color-black);
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(0,0,0,0.04);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s ease;
+  }
+
+  .grid-bg {
+    position: relative;
+    background-image: 
+      linear-gradient(rgba(0,0,0,.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .mesh-gradient {
+    background: radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0, transparent 50%), 
+                radial-gradient(at 0% 100%, rgba(250, 204, 21, 0.05) 0, transparent 50%);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
