@@ -7,9 +7,41 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../services/firebase.ts';
+
 const Home: React.FC = () => {
     const { user } = useAuth();
     const { lowDataMode } = useTheme();
+    const [stats, setStats] = React.useState({
+        streak: 0,
+        avgScore: 0,
+        xp: 0
+    });
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchUserStats = async () => {
+            if (!user) return;
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    setStats({
+                        streak: data.streak || 0,
+                        avgScore: data.avgScore || 0,
+                        xp: data.xp || 0
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching user stats:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserStats();
+    }, [user]);
 
     return (
         <div className='flex flex-col md:flex-row bg-[#FDFBF7] overflow-hidden font-inter text-[#1C1C1C] relative neo-dashboard-layout'>
@@ -43,7 +75,9 @@ const Home: React.FC = () => {
                             >
                                 <div className='bg-white border-[3px] border-[#1C1C1C] p-6 md:p-8 rounded-3xl shadow-[4px_4px_0px_#1C1C1C] md:shadow-[8px_8px_0px_#1C1C1C] flex items-center justify-between group hover:-translate-y-1 hover:shadow-[12px_12px_0px_#1C1C1C] transition-all cursor-default'>
                                     <div>
-                                        <div className='font-black text-3xl md:text-4xl leading-none'>12</div>
+                                        <div className='font-black text-3xl md:text-4xl leading-none'>
+                                            {loading ? '...' : stats.streak}
+                                        </div>
                                         <div className='text-xs font-black uppercase tracking-widest text-[#1C1C1C]/60 mt-2'>Day Streak</div>
                                     </div>
                                     <div className='w-16 h-16 bg-[#FBC343] rounded-2xl border-[3px] border-[#1C1C1C] flex items-center justify-center shrink-0 -rotate-6 group-hover:rotate-6 transition-transform'>
@@ -53,7 +87,9 @@ const Home: React.FC = () => {
 
                                 <div className='bg-white border-[3px] border-[#1C1C1C] p-6 md:p-8 rounded-3xl shadow-[4px_4px_0px_#1C1C1C] md:shadow-[8px_8px_0px_#1C1C1C] flex items-center justify-between group hover:-translate-y-1 hover:shadow-[12px_12px_0px_#1C1C1C] transition-all cursor-default'>
                                     <div>
-                                        <div className='font-black text-3xl md:text-4xl leading-none'>85%</div>
+                                        <div className='font-black text-3xl md:text-4xl leading-none'>
+                                            {loading ? '...' : `${stats.avgScore}%`}
+                                        </div>
                                         <div className='text-xs font-black uppercase tracking-widest text-[#1C1C1C]/60 mt-2'>Avg Score</div>
                                     </div>
                                     <div className='w-16 h-16 bg-[#A5D5D5] rounded-2xl border-[3px] border-[#1C1C1C] flex items-center justify-center shrink-0 rotate-6 group-hover:-rotate-6 transition-transform'>
@@ -63,7 +99,9 @@ const Home: React.FC = () => {
 
                                 <div className='bg-white border-[3px] border-[#1C1C1C] p-6 md:p-8 rounded-3xl shadow-[4px_4px_0px_#1C1C1C] md:shadow-[8px_8px_0px_#1C1C1C] flex items-center justify-between group hover:-translate-y-1 hover:shadow-[12px_12px_0px_#1C1C1C] transition-all cursor-default'>
                                     <div>
-                                        <div className='font-black text-3xl md:text-4xl leading-none'>2,450</div>
+                                        <div className='font-black text-3xl md:text-4xl leading-none'>
+                                            {loading ? '...' : stats.xp.toLocaleString()}
+                                        </div>
                                         <div className='text-xs font-black uppercase tracking-widest text-[#1C1C1C]/60 mt-2'>XP Earned</div>
                                     </div>
                                     <div className='w-16 h-16 bg-[#F4C5C5] rounded-2xl border-[3px] border-[#1C1C1C] flex items-center justify-center shrink-0 -rotate-3 group-hover:rotate-12 transition-transform'>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PlayCircle, Clock, Settings2, Target, Flame, CheckCircle2, XCircle, Share2, Copy } from 'lucide-react';
 import { aiService } from '../../services/ai.ts';
 import { db } from '../../services/firebase.ts';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
 import { cn } from '../../utils/cn.ts';
@@ -95,14 +95,37 @@ const QuizView: React.FC = () => {
 
         // Save result
         if (user) {
-            await addDoc(collection(db, 'quizzes'), {
-                userId: user.uid,
-                topic,
-                score: correct,
-                total: questions.length,
-                difficulty,
-                timestamp: new Date().toISOString()
-            });
+            try {
+                // 1. Save to quizzes collection
+                await addDoc(collection(db, 'quizzes'), {
+                    userId: user.uid,
+                    topic,
+                    score: correct,
+                    total: questions.length,
+                    difficulty,
+                    timestamp: new Date().toISOString()
+                });
+
+                // 2. Update User Stats
+                const userRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const prevAvg = userData.avgScore || 0;
+                    const totalQuizzes = (userData.totalQuizzes || 0) + 1;
+                    const newPercentage = (correct / questions.length) * 100;
+                    const newAvg = Math.round(((prevAvg * (totalQuizzes - 1)) + newPercentage) / totalQuizzes);
+                    
+                    await updateDoc(userRef, {
+                        avgScore: newAvg,
+                        xp: increment(correct * 10),
+                        totalQuizzes: totalQuizzes
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to save quiz results or update stats:", error);
+            }
         }
     };
 

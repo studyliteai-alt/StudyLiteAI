@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext.tsx';
 import { ThemeProvider } from './context/ThemeContext.tsx';
 import { motion } from 'framer-motion';
 import { Brain, Sparkles, BookOpen, ArrowRight } from 'lucide-react';
-// import { ProtectedRoute } from './components/layout/ProtectedRoute.tsx';
+import { ProtectedRoute } from './components/layout/ProtectedRoute.tsx';
 
 // Lazy load pages
 const Landing = lazy(() => import('./pages/Landing'));
@@ -90,15 +90,15 @@ const App: React.FC = () => {
               <Route path='/pricing' element={<Pricing />} />
 
               {/* Protected Routes */}
-              {/* <Route element={<ProtectedRoute />}> */}
-              <Route path='/home' element={<Home />} />
-              <Route path='/session' element={<StudySession />} />
-              <Route path='/history' element={<HistoryPage />} />
-              <Route path='/settings' element={<Settings />} />
-              <Route path='/chat' element={<ChatView />} />
-              <Route path='/quiz/:quizId?' element={<QuizView />} />
-              <Route path='/leaderboard' element={<Leaderboard />} />
-              {/* </Route> */}
+              <Route element={<ProtectedRoute />}>
+                <Route path='/home' element={<Home />} />
+                <Route path='/session' element={<StudySession />} />
+                <Route path='/history' element={<HistoryPage />} />
+                <Route path='/settings' element={<Settings />} />
+                <Route path='/chat' element={<ChatView />} />
+                <Route path='/quiz/:quizId?' element={<QuizView />} />
+                <Route path='/leaderboard' element={<Leaderboard />} />
+              </Route>
 
               {/* Catch all */}
               <Route path='*' element={

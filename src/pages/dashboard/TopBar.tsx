@@ -33,7 +33,7 @@ export const TopBar: React.FC = () => {
     };
 
     return (
-        <header className="h-20 lg:h-24 border-b-[3px] border-[#1C1C1C] bg-[#FDFBF7] px-4 lg:px-8 flex items-center justify-between shrink-0 relative z-10 w-full gap-4">
+        <header className="h-20 lg:h-24 border-b-2 border-[#1C1C1C] bg-[#FDFBF7] px-4 lg:px-8 flex items-center justify-between shrink-0 relative z-10 w-full gap-4">
             
             <div className='flex items-center gap-4 max-w-xl w-full'>
                 <div className='relative w-full group'>
@@ -56,13 +56,13 @@ export const TopBar: React.FC = () => {
                     </div>
 
                     {lowDataMode && (
-                        <div className='bg-[#F4C5C5] border-2 lg:border-[3px] border-[#1C1C1C] px-2 py-1 lg:px-3 lg:py-1.5 rounded-xl lg:rounded-full flex items-center gap-1 lg:gap-2 shadow-[2px_2px_0px_0px_#1C1C1C] rotate-2 hidden sm:flex'>
+                        <div className='bg-[#F4C5C5] border-2 border-[#1C1C1C] px-2 py-1 lg:px-3 lg:py-1.5 rounded-xl lg:rounded-full items-center gap-1 lg:gap-2 shadow-[2px_2px_0px_0px_#1C1C1C] rotate-2 hidden sm:flex'>
                             <Database size={12} strokeWidth={3} className="text-[#1C1C1C]" />
                             <span className='text-[8px] lg:text-[10px] font-black uppercase tracking-widest text-[#1C1C1C]'>Low Data</span>
                         </div>
                     )}
                     
-                    <button onClick={() => navigate('/settings')} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-[#FDFBF7] hover:bg-[#A5D5D5] border-[2px] lg:border-[3px] border-[#1C1C1C] rounded-xl lg:rounded-full transition-all shadow-[2px_2px_0px_0px_#1C1C1C] lg:shadow-[4px_4px_0px_0px_#1C1C1C] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#1C1C1C] group">
+                    <button onClick={() => navigate('/settings')} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-[#FDFBF7] hover:bg-[#A5D5D5] border-2 border-[#1C1C1C] rounded-xl lg:rounded-full transition-all shadow-[2px_2px_0px_0px_#1C1C1C] lg:shadow-[4px_4px_0px_0px_#1C1C1C] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#1C1C1C] group">
                         <Settings size={18} strokeWidth={3} className="text-[#1C1C1C] group-hover:rotate-45 transition-transform duration-300" />
                     </button>
                     
@@ -71,8 +71,12 @@ export const TopBar: React.FC = () => {
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className="flex items-center gap-3 bg-white border-[3px] border-[#1C1C1C] pl-2 pr-6 py-1.5 rounded-full shadow-[4px_4px_0px_0px_#1C1C1C] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#1C1C1C] transition-all cursor-pointer"
                         >
-                            <div className="w-10 h-10 bg-[#1C1C1C] rounded-full flex items-center justify-center border-2 border-transparent">
-                                <User size={18} strokeWidth={3} className='text-white' />
+                            <div className="w-10 h-10 bg-[#1C1C1C] rounded-full flex items-center justify-center border-2 border-transparent overflow-hidden shadow-[inset_0px_0px_0px_2px_#1C1C1C]">
+                                {user?.photoURL ? (
+                                    <img src={user.photoURL} alt="Avatar" className='w-full h-full object-cover' />
+                                ) : (
+                                    <User size={18} strokeWidth={3} className='text-white' />
+                                )}
                             </div>
                             <span className="font-black text-xs tracking-widest text-[#1C1C1C] hidden md:block uppercase truncate max-w-[120px]">
                                 {user?.displayName || 'Student'}

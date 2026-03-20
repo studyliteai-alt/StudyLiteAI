@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { TopBar } from './TopBar.tsx';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
@@ -42,6 +42,17 @@ const HistoryPage: React.FC = () => {
         };
         fetchHistory();
     }, [user]);
+
+    const handleDeleteSession = async (id: string) => {
+        if (!window.confirm("Are you sure you want to purge this neural record? This cannot be undone.")) return;
+        
+        try {
+            await deleteDoc(doc(db, 'sessions', id));
+            setSessions(prev => prev.filter(s => s.id !== id));
+        } catch (error) {
+            console.error("Error deleting session:", error);
+        }
+    };
 
     const filteredSessions = sessions.filter(s => 
         (s.title || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -173,7 +184,8 @@ const HistoryPage: React.FC = () => {
                                                     
                                                     <div className='flex flex-row sm:flex-row items-center justify-between sm:justify-end gap-4 mt-2 lg:mt-0 w-full lg:w-auto'>
                                                         <button 
-                                                            className='w-12 h-12 md:w-14 md:h-14 shrink-0 bg-white border-[3px] border-[#1C1C1C] flex items-center justify-center text-[#1C1C1C] hover:text-white hover:bg-black rounded-xl shadow-[4px_4px_0px_#1C1C1C] hover:translate-y-1 hover:shadow-[0px_0px_0px_#1C1C1C] transition-all rotate-3 group/del'
+                                                            onClick={() => handleDeleteSession(session.id)}
+                                                            className='w-12 h-12 md:w-14 md:h-14 shrink-0 bg-white border-[3px] border-[#1C1C1C] flex items-center justify-center text-[#1C1C1C] hover:text-white hover:bg-black rounded-xl shadow-[4px_4px_0px_#1C1C1C] hover:translate-y-1 hover:shadow-[0px_0px_0px_#1C1C1C] transition-all rotate-3 group/del cursor-pointer'
                                                             title="Purge Record"
                                                         >
                                                             <Trash2 size={20} strokeWidth={2.5} className="group-hover/del:rotate-12 transition-transform" />

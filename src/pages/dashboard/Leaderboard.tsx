@@ -2,20 +2,45 @@ import React from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { TopBar } from './TopBar.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
+import { useAuth } from '../../context/AuthContext.tsx';
+import { db } from '../../services/firebase.ts';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { Trophy, Medal, Flame, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn.ts';
 
-const mockLeaderboard = [
-    { id: 1, name: 'Alex Johnson', points: 14500, streak: 12, rank: 1 },
-    { id: 2, name: 'Sarah Miller', points: 13200, streak: 8, rank: 2 },
-    { id: 3, name: 'David Chen', points: 12850, streak: 15, rank: 3 },
-    { id: 4, name: 'Student', points: 11200, streak: 5, rank: 4, isCurrentUser: true }, // mocked current user
-    { id: 5, name: 'Emily Taylor', points: 10500, streak: 3, rank: 5 },
-];
-
 export const Leaderboard: React.FC = () => {
+    const { user: currentUser } = useAuth();
     const { lowDataMode } = useTheme();
+    const [leaderboard, setLeaderboard] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                const q = query(
+                    collection(db, 'users'),
+                    orderBy('xp', 'desc'),
+                    limit(10)
+                );
+                const snapshot = await getDocs(q);
+                const results = snapshot.docs.map((doc, index) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    rank: index + 1,
+                    isCurrentUser: doc.id === currentUser?.uid
+                }));
+                setLeaderboard(results);
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+                setLeaderboard([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLeaderboard();
+    }, [currentUser]);
 
     return (
         <div className='flex bg-[#FDFBF7] overflow-hidden font-inter text-[#1C1C1C] relative neo-dashboard-layout'>
@@ -56,13 +81,17 @@ export const Leaderboard: React.FC = () => {
                             <div className="grid grid-cols-12 gap-4 p-6 border-b-[3px] border-[#1C1C1C] bg-[#A5D5D5] font-black uppercase tracking-widest text-xs">
                                 <div className="col-span-2 md:col-span-1 text-center">Rank</div>
                                 <div className="col-span-6 md:col-span-6">Student</div>
-                                <div className="col-span-4 md:col-span-3 text-right">Points</div>
+                                <div className="col-span-4 md:col-span-3 text-right">XP</div>
                                 <div className="hidden md:block md:col-span-2 text-right">Streak</div>
                             </div>
 
                             {/* Table Body */}
                             <div className="divide-y-[3px] divide-[#1C1C1C]">
-                                {mockLeaderboard.map((student) => (
+                                {loading ? (
+                                    <div className="p-20 text-center font-black uppercase tracking-widest text-[#1C1C1C]/40 animate-pulse">
+                                        Fetching Neural Rankings...
+                                    </div>
+                                ) : leaderboard.length > 0 ? leaderboard.map((student) => (
                                     <motion.div 
                                         key={student.id}
                                         whileHover={{ backgroundColor: '#FDFBF7' }}
@@ -98,10 +127,10 @@ export const Leaderboard: React.FC = () => {
                                             </span>
                                         </div>
 
-                                        {/* Points */}
+                                        {/* Points -> XP */}
                                         <div className="col-span-4 md:col-span-3 text-right">
                                             <span className="font-black text-lg tracking-tighter uppercase text-[#1C1C1C] bg-[#A5D5D5] px-2.5 py-1 rounded-lg border-[3px] border-[#1C1C1C] shadow-[2px_2px_0px_white] -rotate-2 inline-block">
-                                                {student.points.toLocaleString()}
+                                                {(student.xp || 0).toLocaleString()}
                                             </span>
                                         </div>
 
@@ -109,11 +138,16 @@ export const Leaderboard: React.FC = () => {
                                         <div className="hidden md:flex md:col-span-2 justify-end">
                                             <div className="flex items-center gap-2 bg-[#FBC343] px-3 py-1 rounded-lg border-[3px] border-[#1C1C1C] shadow-[2px_2px_0px_white] rotate-2">
                                                 <Flame size={16} strokeWidth={3} className="text-[#1C1C1C] fill-[#1C1C1C]" />
-                                                <span className="font-black uppercase tracking-widest text-[#1C1C1C]">{student.streak}</span>
+                                                <span className="font-black uppercase tracking-widest text-[#1C1C1C]">{student.streak || 0}</span>
                                             </div>
                                         </div>
                                     </motion.div>
-                                ))}
+                                )) : (
+                                    <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
+                                        <Trophy size={48} className="text-[#1C1C1C]/20" />
+                                        <p className="font-black uppercase tracking-widest text-[#1C1C1C]/40">No heroes ranked yet. Be the first!</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

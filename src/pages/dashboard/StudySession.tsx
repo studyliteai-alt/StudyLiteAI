@@ -4,7 +4,7 @@ import { TopBar } from './TopBar.tsx';
 import { aiService, type AISessionResponse } from '../../services/ai.ts';
 import { BookOpen, HelpCircle, List, Sparkles, Send, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../../services/firebase.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
@@ -28,14 +28,24 @@ const StudySession: React.FC = () => {
       
       // Save to Firebase
       if (user) {
+        const sessionTitle = notes.trim().split('\n')[0].substring(0, 50) || 'Study Session';
+        
         await addDoc(collection(db, 'sessions'), {
           userId: user.uid,
+          title: sessionTitle,
           notes: notes,
           summary: aiResponse.summary,
           keyPoints: aiResponse.keyPoints,
           mcqs: aiResponse.mcqs,
           shortAnswers: aiResponse.shortAnswers,
           timestamp: new Date().toISOString()
+        });
+
+        // Award XP for new session
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, {
+          xp: increment(50),
+          sessionsCount: increment(1)
         });
       }
     } catch (error) {

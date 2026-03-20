@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, History, Settings, LogOut, FileText, MessageSquare, PlayCircle, Trophy, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
+import { LayoutDashboard, History, Settings, LogOut, FileText, MessageSquare, PlayCircle, Trophy, ChevronLeft, ChevronRight, Menu, X, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.tsx';
 import { auth } from '../../services/firebase.ts';
 import { signOut } from 'firebase/auth';
 import { cn } from '../../utils/cn.ts';
@@ -17,6 +18,7 @@ const navigation = [
 ];
 
 export const Sidebar: React.FC = () => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = React.useState(() => localStorage.getItem('sidebarCollapsed') === 'true');
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -51,7 +53,7 @@ export const Sidebar: React.FC = () => {
             {/* Mobile Overlay Background */}
             <div
                 onClick={() => setMobileOpen(false)}
-                className={cn("lg:hidden fixed inset-0 bg-[#A5D5D5]/20 backdrop-blur-sm z-[45] transition-all duration-300", mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")}
+                className={cn("lg:hidden fixed inset-0 bg-[#A5D5D5]/20 backdrop-blur-sm z-45 transition-all duration-300", mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none")}
             />
 
             <aside className={cn(
@@ -66,13 +68,7 @@ export const Sidebar: React.FC = () => {
 
                 {/* Logo Area */}
                 <div className="h-20 lg:h-24 flex items-center px-4 lg:px-6 border-b-[3px] border-[#1C1C1C] shrink-0 bg-[#A5D5D5] relative justify-center overflow-visible">
-                    {/* <div className='hidden lg:block absolute -right-4 -top-4 w-16 h-16 border-[3px] border-[#1C1C1C] rounded-full bg-[#1C1C1C] translate-x-1/2 -translate-y-1/2 pointer-events-none'></div> */}
-                    {/* <div className='hidden lg:block absolute -left-2 -bottom-2 w-10 h-10 border-[3px] border-[#1C1C1C] rounded-xl bg-[#FBC343] -rotate-12 pointer-events-none'></div> */}
-
                     <div className={cn("flex items-center relative z-10 cursor-pointer hover:scale-105 transition-transform", isCollapsed ? "justify-center w-full lg:justify-center" : "gap-3 w-full lg:pl-2")} onClick={() => navigate('/')}>
-                        {/* <div className="w-10 h-10 bg-[#1C1C1C] rounded-xl flex items-center justify-center border-[3px] border-[#1C1C1C] shadow-[4px_4px_0px_white] rotate-6 hover:rotate-12 transition-transform shrink-0">
-                            <Sparkles className="text-[#FBC343]" size={20} strokeWidth={3} />
-                        </div> */}
                         <div>
                             <img src={logo} alt="Logo" className="w-10 h-10" />
                         </div>
@@ -88,7 +84,7 @@ export const Sidebar: React.FC = () => {
                         <NavLink
                             key={item.name}
                             to={item.href}
-                            onClick={() => setMobileOpen(false)} // close gracefully
+                            onClick={() => setMobileOpen(false)}
                             className={({ isActive }) => cn(
                                 'group flex items-center px-4 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all border-[3px] w-full',
                                 isActive
@@ -110,8 +106,25 @@ export const Sidebar: React.FC = () => {
                     ))}
                 </nav>
 
-                {/* Logout Footer */}
-                <div className="p-4 md:p-6 border-t-[3px] border-[#1C1C1C] bg-[#FDFBF7] shrink-0 mt-auto flex justify-center">
+                {/* User Info & Logout Footer */}
+                <div className="p-4 md:p-6 border-t-[3px] border-[#1C1C1C] bg-[#FDFBF7] shrink-0 mt-auto flex flex-col gap-4">
+                    {!isCollapsed && (
+                        <div className="flex items-center gap-3 px-2">
+                            <div className="w-10 h-10 rounded-full border-[3px] border-[#1C1C1C] overflow-hidden bg-[#FBC343] shrink-0">
+                                {user?.photoURL ? (
+                                    <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-[#A5D5D5]">
+                                        <User size={18} strokeWidth={3} className="text-[#1C1C1C]" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex flex-col truncate">
+                                <span className="font-black text-xs uppercase truncate">{user?.displayName || 'Student'}</span>
+                                <span className="font-bold text-[10px] text-[#1C1C1C]/70 truncate">{user?.email}</span>
+                            </div>
+                        </div>
+                    )}
                     <button
                         onClick={handleLogout}
                         className={cn("flex items-center justify-center gap-3 py-4 text-xs font-black uppercase tracking-widest text-[#1C1C1C] bg-[#F4C5C5] border-[3px] border-[#1C1C1C] rounded-2xl shadow-[4px_4px_0px_0px_#1C1C1C] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#1C1C1C] transition-all", isCollapsed ? "px-4 w-full lg:px-0 lg:w-12 lg:h-12 lg:rounded-2xl" : "px-4 w-full")}
@@ -125,3 +138,5 @@ export const Sidebar: React.FC = () => {
         </>
     );
 };
+
+export default Sidebar;

@@ -33,6 +33,9 @@ const Signup: React.FC = () => {
         plan: 'Basic',
         sessionsCount: 0,
         streak: 0,
+        avgScore: 0,
+        xp: 0,
+        totalQuizzes: 0,
         createdAt: new Date().toISOString()
       });
       
@@ -57,6 +60,10 @@ const Signup: React.FC = () => {
         name: user.displayName || 'Student',
         email: user.email,
         plan: 'Basic',
+        streak: 0,
+        avgScore: 0,
+        xp: 0,
+        totalQuizzes: 0,
         createdAt: new Date().toISOString()
       }, { merge: true });
       
