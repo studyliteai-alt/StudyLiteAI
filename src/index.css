@@ -19,9 +19,10 @@
 
 @media (min-width: 1024px) {
   .neo-dashboard-layout {
-    zoom: 0.75;
-    width: 133.33vw;
-    height: 133.33vh;
+    zoom: 0.65;
+    width: 153.84vw !important;
+    height: 153.84vh !important;
+    min-height: 153.84vh !important;
   }
 }
 

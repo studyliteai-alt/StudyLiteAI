@@ -45,7 +45,7 @@ export const Sidebar: React.FC = () => {
             {/* Mobile Hamburger overlay button */}
             <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden fixed bottom-6 right-6 z-60 w-14 h-14 bg-[#FBC343] border-[3px] border-[#1C1C1C] rounded-full flex items-center justify-center shadow-[4px_4px_0px_#1C1C1C] hover:scale-105 active:scale-95 transition-all"
+                className="lg:hidden fixed top-4 left-4 z-100 w-12 h-12 bg-[#FBC343] border-[3px] border-[#1C1C1C] rounded-xl flex items-center justify-center shadow-[4px_4px_0px_#1C1C1C] active:scale-95 transition-all"
             >
                 {mobileOpen ? <X strokeWidth={3} size={24} className="text-[#1C1C1C]" /> : <Menu strokeWidth={3} size={24} className="text-[#1C1C1C]" />}
             </button>

@@ -33,7 +33,7 @@ export const TopBar: React.FC = () => {
     };
 
     return (
-        <header className="h-20 lg:h-24 border-b-2 border-[#1C1C1C] bg-[#FDFBF7] px-4 lg:px-8 flex items-center justify-between shrink-0 relative z-10 w-full gap-4">
+        <header className="h-20 lg:h-24 border-b-2 border-[#1C1C1C] bg-[#FDFBF7] pl-20 pr-4 lg:px-8 flex items-center justify-between shrink-0 relative z-10 w-full gap-4">
             
             <div className='flex items-center gap-4 max-w-xl w-full'>
                 <div className='relative w-full group'>

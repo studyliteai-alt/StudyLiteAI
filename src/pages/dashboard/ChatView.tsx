@@ -6,7 +6,7 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { db } from '../../services/firebase.ts';
-import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, increment } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, doc, increment } from 'firebase/firestore';
 import { cn } from '../../utils/cn.ts';
 
 const ChatView: React.FC = () => {
@@ -22,8 +22,7 @@ const ChatView: React.FC = () => {
         if (!user) return;
 
         const q = query(
-            collection(db, 'chat_messages'),
-            where('userId', '==', user.uid),
+            collection(db, 'users', user.uid, 'chat_messages'),
             orderBy('timestamp', 'asc')
         );
 
@@ -54,9 +53,8 @@ const ChatView: React.FC = () => {
         setInput('');
         
         try {
-            // 1. Add User Message to Firestore
-            await addDoc(collection(db, 'chat_messages'), {
-                userId: user.uid,
+            // 1. Add User Message to Firestore subcollection
+            await addDoc(collection(db, 'users', user.uid, 'chat_messages'), {
                 role: 'user',
                 content: userContent,
                 timestamp: serverTimestamp()
@@ -66,8 +64,7 @@ const ChatView: React.FC = () => {
 
             // Simulate AI response for now (to be replaced by actual AI service later)
             setTimeout(async () => {
-                await addDoc(collection(db, 'chat_messages'), {
-                    userId: user.uid,
+                await addDoc(collection(db, 'users', user.uid, 'chat_messages'), {
                     role: 'ai',
                     content: `Let's dive into ${userContent}. I can break this topic down into smaller chunks, create flashcards, or quiz you on the core concepts. What works best for you?`,
                     timestamp: serverTimestamp()
@@ -87,7 +84,7 @@ const ChatView: React.FC = () => {
     };
 
     return (
-        <div className='flex bg-[#FDFBF7] overflow-hidden font-inter text-[#1C1C1C] relative neo-dashboard-layout h-screen'>
+        <div className='flex bg-[#FDFBF7] overflow-hidden font-inter text-[#1C1C1C] relative neo-dashboard-layout h-dvh'>
             {/* Background Grid */}
             {!lowDataMode && (
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0" style={{ backgroundImage: 'linear-gradient(#1c1c1c 2px, transparent 2px), linear-gradient(90deg, #1c1c1c 2px, transparent 2px)', backgroundSize: '40px 40px' }}></div>
@@ -204,7 +201,7 @@ const ChatView: React.FC = () => {
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                                     placeholder="Message StudyLite AI..."
-                                    className="grow bg-transparent border-none py-3 md:py-5 px-3 md:px-6 text-sm md:text-lg font-black placeholder:text-[#1C1C1C]/20 focus:outline-none text-[#1C1C1C]"
+                                    className="grow bg-transparent border-none py-3 md:py-5 px-3 md:px-6 text-base md:text-lg font-black placeholder:text-[#1C1C1C]/20 focus:outline-none text-[#1C1C1C]"
                                 />
                                 <button
                                     onClick={handleSend}

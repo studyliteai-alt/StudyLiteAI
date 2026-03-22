@@ -4,7 +4,7 @@ import { TopBar } from './TopBar.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { db } from '../../services/firebase.ts';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { Trophy, Medal, Flame, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn.ts';
@@ -16,30 +16,29 @@ export const Leaderboard: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
-        const fetchLeaderboard = async () => {
-            try {
-                const q = query(
-                    collection(db, 'users'),
-                    orderBy('xp', 'desc'),
-                    limit(10)
-                );
-                const snapshot = await getDocs(q);
-                const results = snapshot.docs.map((doc, index) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    rank: index + 1,
-                    isCurrentUser: doc.id === currentUser?.uid
-                }));
-                setLeaderboard(results);
-            } catch (error) {
-                console.error("Error fetching leaderboard:", error);
-                setLeaderboard([]);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!currentUser) return;
+        const q = query(
+            collection(db, 'users'),
+            orderBy('xp', 'desc'),
+            limit(10)
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const ranked = results.map((data: any, index: number) => ({
+                id: data.id,
+                ...data,
+                rank: index + 1,
+                isCurrentUser: data.id === currentUser.uid
+            }));
+            setLeaderboard(ranked);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching leaderboard:", error);
+            setLeaderboard([]);
+            setLoading(false);
+        });
 
-        fetchLeaderboard();
+        return () => unsubscribe();
     }, [currentUser]);
 
     return (

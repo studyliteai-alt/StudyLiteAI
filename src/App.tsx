@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext.tsx';
 import { motion } from 'framer-motion';
 import { Brain, Sparkles, BookOpen, ArrowRight } from 'lucide-react';
 import { ProtectedRoute } from './components/layout/ProtectedRoute.tsx';
+import { ScrollToTop } from './components/ScrollToTop.tsx';
 
 // Lazy load pages
 const Landing = lazy(() => import('./pages/Landing'));
@@ -30,6 +31,7 @@ const App: React.FC = () => {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <Suspense fallback={
             <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-6 relative overflow-hidden">
                 {/* Background Grid */}

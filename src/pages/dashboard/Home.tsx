@@ -7,41 +7,16 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext.tsx';
 import { useAuth } from '../../context/AuthContext.tsx';
 
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../services/firebase.ts';
-
 const Home: React.FC = () => {
-    const { user } = useAuth();
+    const { user, userData } = useAuth();
     const { lowDataMode } = useTheme();
-    const [stats, setStats] = React.useState({
-        streak: 0,
-        avgScore: 0,
-        xp: 0
-    });
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchUserStats = async () => {
-            if (!user) return;
-            try {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    setStats({
-                        streak: data.streak || 0,
-                        avgScore: data.avgScore || 0,
-                        xp: data.xp || 0
-                    });
-                }
-            } catch (error) {
-                console.error("Error fetching user stats:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserStats();
-    }, [user]);
+    
+    const stats = {
+        streak: userData?.streak || 0,
+        avgScore: userData?.avgScore || 0,
+        xp: userData?.xp || 0
+    };
+    const loading = !userData;
 
     return (
         <div className='flex flex-col md:flex-row bg-[#FDFBF7] overflow-hidden font-inter text-[#1C1C1C] relative neo-dashboard-layout'>

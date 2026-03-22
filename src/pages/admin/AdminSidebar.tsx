@@ -37,7 +37,7 @@ export const AdminSidebar: React.FC = () => {
         <>
             <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden fixed bottom-6 right-6 z-60 w-14 h-14 bg-[#1C1C1C] border-[3px] border-[#FBC343] rounded-full flex items-center justify-center shadow-[4px_4px_0px_#FBC343] hover:scale-105 active:scale-95 transition-all"
+                className="lg:hidden fixed top-4 left-4 z-100 w-12 h-12 bg-[#1C1C1C] border-[3px] border-[#FBC343] rounded-xl flex items-center justify-center shadow-[4px_4px_0px_#FBC343] active:scale-95 transition-all"
             >
                 {mobileOpen ? <X strokeWidth={3} size={24} className="text-[#FBC343]" /> : <Menu strokeWidth={3} size={24} className="text-[#FBC343]" />}
             </button>

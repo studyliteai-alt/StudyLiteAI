@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar.tsx';
 import { TopBar } from './TopBar.tsx';
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { useTheme } from '../../context/ThemeContext.tsx';
@@ -18,29 +18,26 @@ const HistoryPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        const fetchHistory = async () => {
-            if (!user) return;
-            try {
-                const q = query(
-                    collection(db, 'sessions'), 
-                    where('userId', '==', user.uid),
-                    orderBy('timestamp', 'desc')
-                );
-                const snapshot = await getDocs(q);
-                const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setSessions(results);
-            } catch (error) {
-                console.error("Error fetching history:", error);
-                setSessions([
-                  { id: '1', title: 'Microservices Fundamentals', notes: 'Distributed systems notes...', timestamp: '2026-03-18T10:00:00Z', summaryCount: 3, quizTaken: true, score: 85 },
-                  { id: '2', title: 'React State Management', notes: 'React Hooks mastery...', timestamp: '2026-03-17T14:30:00Z', summaryCount: 5, quizTaken: false, score: 0 },
-                  { id: '3', title: 'PostgreSQL Advanced Indexing', notes: 'Database designs...', timestamp: '2026-03-15T09:15:00Z', summaryCount: 2, quizTaken: true, score: 92 },
-                ]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchHistory();
+        if (!user) return;
+        const q = query(
+            collection(db, 'sessions'), 
+            where('userId', '==', user.uid),
+            orderBy('timestamp', 'desc')
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSessions(results);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching history:", error);
+            setSessions([
+              { id: '1', title: 'Microservices Fundamentals', notes: 'Distributed systems notes...', timestamp: '2026-03-18T10:00:00Z', summaryCount: 3, quizTaken: true, score: 85 },
+              { id: '2', title: 'React State Management', notes: 'React Hooks mastery...', timestamp: '2026-03-17T14:30:00Z', summaryCount: 5, quizTaken: false, score: 0 },
+              { id: '3', title: 'PostgreSQL Advanced Indexing', notes: 'Database designs...', timestamp: '2026-03-15T09:15:00Z', summaryCount: 2, quizTaken: true, score: 92 },
+            ]);
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, [user]);
 
     const handleDeleteSession = async (id: string) => {
