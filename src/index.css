@@ -10,8 +10,8 @@
   --color-glass: rgba(255, 255, 255, 0.85);
   --color-glass-dark: rgba(15, 23, 42, 0.7);
   
-  --font-space: "Plus Jakarta Sans", "Inter", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-inter: "Outfit", sans-serif;
   
   --radius-xl: 16px;
   --radius-2xl: 24px;
@@ -100,4 +100,13 @@
 
 .animate-pulse-soft {
   animation: pulse-soft 4s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
 }

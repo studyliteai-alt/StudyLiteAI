@@ -7,7 +7,7 @@ import { auth } from '../../services/firebase.ts';
 import { signOut } from 'firebase/auth';
 
 export const TopBar: React.FC = () => {
-    const { user } = useAuth();
+    const { user, userData } = useAuth();
     const { lowDataMode } = useTheme();
     const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,13 +71,26 @@ export const TopBar: React.FC = () => {
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className="flex items-center gap-3 bg-white border-[3px] border-[#1C1C1C] pl-2 pr-6 py-1.5 rounded-full shadow-[4px_4px_0px_0px_#1C1C1C] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#1C1C1C] transition-all cursor-pointer"
                         >
-                            <div className="w-10 h-10 bg-[#1C1C1C] rounded-full flex items-center justify-center border-2 border-transparent overflow-hidden shadow-[inset_0px_0px_0px_2px_#1C1C1C]">
-                                {user?.photoURL ? (
-                                    <img src={user.photoURL} alt="Avatar" className='w-full h-full object-cover' />
-                                ) : (
-                                    <User size={18} strokeWidth={3} className='text-white' />
-                                )}
-                            </div>
+                            {userData?.plan === 'Premium' ? (
+                                <div className="relative w-10 h-10 rounded-full flex items-center justify-center overflow-hidden p-[3px] shrink-0 shadow-[0_0_15px_#FBC343]">
+                                    <div className="absolute inset-[-50%] animate-spin-slow" style={{ background: 'conic-gradient(from 0deg, #FBC343, #A5D5D5, #F4C5C5, #a855f7, #3b82f6, #FBC343)' }}></div>
+                                    <div className="relative z-10 w-full h-full rounded-full overflow-hidden bg-[#1C1C1C] flex items-center justify-center">
+                                        {user?.photoURL ? (
+                                            <img src={user.photoURL} alt="Avatar" className='w-full h-full object-cover' />
+                                        ) : (
+                                            <User size={20} className="text-white/60" />
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="w-10 h-10 bg-[#1C1C1C] rounded-full flex items-center justify-center border-2 border-transparent overflow-hidden shadow-[inset_0px_0px_0px_2px_#1C1C1C] shrink-0">
+                                    {user?.photoURL ? (
+                                        <img src={user.photoURL} alt="Avatar" className='w-full h-full object-cover' />
+                                    ) : (
+                                        <User size={20} className="text-white/60" />
+                                    )}
+                                </div>
+                            )}
                             <span className="font-black text-xs tracking-widest text-[#1C1C1C] hidden md:block uppercase truncate max-w-[120px]">
                                 {user?.displayName || 'Student'}
                             </span>

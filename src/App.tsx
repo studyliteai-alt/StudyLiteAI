@@ -20,6 +20,10 @@ const Settings = lazy(() => import('./pages/dashboard/Settings'));
 const ChatView = lazy(() => import('./pages/dashboard/ChatView'));
 const QuizView = lazy(() => import('./pages/dashboard/QuizView'));
 const Leaderboard = lazy(() => import('./pages/dashboard/Leaderboard').then(module => ({ default: module.Leaderboard })));
+import { AdminLayout } from './pages/admin/AdminLayout';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminStats = lazy(() => import('./pages/admin/AdminStats').then(module => ({ default: module.AdminStats })));
+const AdminLogs = lazy(() => import('./pages/admin/AdminLogs').then(module => ({ default: module.AdminLogs })));
 
 const App: React.FC = () => {
   return (
@@ -98,6 +102,13 @@ const App: React.FC = () => {
                 <Route path='/chat' element={<ChatView />} />
                 <Route path='/quiz/:quizId?' element={<QuizView />} />
                 <Route path='/leaderboard' element={<Leaderboard />} />
+              </Route>
+
+              {/* Admin Routes */}
+              <Route path='/admin' element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path='stats' element={<AdminStats />} />
+                <Route path='logs' element={<AdminLogs />} />
               </Route>
 
               {/* Catch all */}
