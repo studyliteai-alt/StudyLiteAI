@@ -27,10 +27,10 @@ const Login: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
     setError('');
     try {
       await signInWithPopup(auth, googleProvider);
+      setLoading(true);
       navigate('/home');
     } catch (err: any) {
       setError(err.message || 'Failed to login with Google');

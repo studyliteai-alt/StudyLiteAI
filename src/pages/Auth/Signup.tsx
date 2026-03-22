@@ -49,10 +49,10 @@ const Signup: React.FC = () => {
   };
 
   const handleGoogleSignup = async () => {
-    setLoading(true);
     setError('');
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
+      setLoading(true);
       const user = userCredential.user;
 
       // We use merge: true so we don't accidentally overwrite existing users signing in again
